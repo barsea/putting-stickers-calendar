@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { StickerType, DayStickers } from '@/hooks/useStickers';
+import StickerLabels from './StickerLabels';
 
 interface CalendarProps {
   onStickerClick: (date: number, stickerType: StickerType) => void;
@@ -197,16 +198,8 @@ export default function Calendar({ onStickerClick, getDayStickers }: CalendarPro
         })}
       </div>
       
-      {/* 説明テキスト */}
-      <div className="p-4 bg-gray-50 text-center text-sm text-gray-600 border-t">
-        各色のエリアをタップしてステッカーを貼ろう！<br/>
-        <span className="inline-flex items-center gap-1 mt-1">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>赤
-          <div className="w-3 h-3 bg-blue-500 rounded-full ml-2"></div>青
-          <div className="w-3 h-3 bg-green-500 rounded-full ml-2"></div>緑
-          <div className="w-3 h-3 bg-yellow-500 rounded-full ml-2"></div>黄
-        </span>
-      </div>
+      {/* ステッカーラベル */}
+      <StickerLabels />
     </div>
   );
 }
