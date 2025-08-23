@@ -11,21 +11,22 @@ export interface DayStickers {
   yellow: boolean;
 }
 
-export function useStickers() {
+export function useStickers(userId?: string) {
   const [stickerData, setStickerData] = useState<Map<number, DayStickers>>(new Map());
   
-  // LocalStorageキーを現在の年月で生成
-  const getStorageKey = () => {
+  // LocalStorageキーを現在の年月とユーザーIDで生成
+  const getStorageKey = (userId?: string) => {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1; // 月は0から始まるので+1
-    return `sticker-calendar-${year}-${month}`;
+    const userPrefix = userId ? `user-${userId}-` : 'guest-';
+    return `${userPrefix}sticker-calendar-${year}-${month}`;
   };
   
   // LocalStorageからデータを読み込み
   useEffect(() => {
     try {
-      const storageKey = getStorageKey();
+      const storageKey = getStorageKey(userId);
       const storedData = localStorage.getItem(storageKey);
       if (storedData) {
         const dataObject = JSON.parse(storedData);
@@ -50,12 +51,12 @@ export function useStickers() {
     } catch (error) {
       console.error('Failed to load sticker data from localStorage:', error);
     }
-  }, []);
+  }, [userId]);
   
   // LocalStorageにデータを保存
   const saveStickerData = (data: Map<number, DayStickers>) => {
     try {
-      const storageKey = getStorageKey();
+      const storageKey = getStorageKey(userId);
       const dataObject: Record<number, DayStickers> = {};
       data.forEach((stickers, date) => {
         dataObject[date] = stickers;

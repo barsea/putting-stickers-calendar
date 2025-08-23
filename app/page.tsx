@@ -1,12 +1,64 @@
 'use client';
 
+import { useState } from 'react';
 import Calendar from '@/components/Calendar';
 import Stats from '@/components/Stats';
+import UserInfo from '@/components/UserInfo';
+import AuthButtons from '@/components/AuthButtons';
+import SignUpForm from '@/components/SignUpForm';
+import LoginForm from '@/components/LoginForm';
 import { useStickers } from '@/hooks/useStickers';
+import { useAuth } from '@/hooks/useAuth';
+
+type ViewMode = 'calendar' | 'signup' | 'login';
 
 export default function Home() {
-  const { getDayStickers, toggleSticker, getStats } = useStickers();
+  const { authState, signUp, login, logout } = useAuth();
+  const [viewMode, setViewMode] = useState<ViewMode>('calendar');
+  
+  const userId = authState.user?.id;
+  const { getDayStickers, toggleSticker, getStats } = useStickers(userId);
   const stats = getStats();
+
+  const handleSignUp = async (data: any) => {
+    const result = await signUp(data);
+    if (result.success) {
+      setViewMode('calendar');
+    }
+    return result;
+  };
+
+  const handleLogin = async (data: any) => {
+    const result = await login(data);
+    if (result.success) {
+      setViewMode('calendar');
+    }
+    return result;
+  };
+
+  const handleLogout = () => {
+    logout();
+    setViewMode('calendar');
+  };
+
+  // 認証画面の表示
+  if (viewMode === 'signup') {
+    return (
+      <SignUpForm 
+        onSignUp={handleSignUp}
+        onSwitchToLogin={() => setViewMode('login')}
+      />
+    );
+  }
+
+  if (viewMode === 'login') {
+    return (
+      <LoginForm 
+        onLogin={handleLogin}
+        onSwitchToSignUp={() => setViewMode('signup')}
+      />
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -21,9 +73,20 @@ export default function Home() {
         </header>
 
         <div className="space-y-6">
+          {/* 認証状態に応じた表示 */}
+          {authState.isAuthenticated && authState.user ? (
+            <UserInfo user={authState.user} onLogout={handleLogout} />
+          ) : (
+            <AuthButtons 
+              onShowSignUp={() => setViewMode('signup')}
+              onShowLogin={() => setViewMode('login')}
+            />
+          )}
+
           <Calendar 
             onStickerClick={toggleSticker}
             getDayStickers={getDayStickers}
+            userId={userId}
           />
           
           <Stats 

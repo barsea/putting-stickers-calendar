@@ -7,9 +7,10 @@ import StickerLabels from './StickerLabels';
 interface CalendarProps {
   onStickerClick: (date: number, stickerType: StickerType) => void;
   getDayStickers: (date: number) => DayStickers;
+  userId?: string;
 }
 
-export default function Calendar({ onStickerClick, getDayStickers }: CalendarProps) {
+export default function Calendar({ onStickerClick, getDayStickers, userId }: CalendarProps) {
   const [currentDate] = useState(new Date());
   
   const year = currentDate.getFullYear();
@@ -199,7 +200,7 @@ export default function Calendar({ onStickerClick, getDayStickers }: CalendarPro
       </div>
       
       {/* ステッカーラベル */}
-      <StickerLabels />
+      <StickerLabels userId={userId} />
     </div>
   );
 }

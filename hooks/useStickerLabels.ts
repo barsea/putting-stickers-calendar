@@ -17,15 +17,19 @@ const defaultLabels: StickerLabels = {
   yellow: '早起き'
 };
 
-export function useStickerLabels() {
+export function useStickerLabels(userId?: string) {
   const [labels, setLabels] = useState<StickerLabels>(defaultLabels);
   
-  const STORAGE_KEY = 'sticker-labels';
+  const getStorageKey = () => {
+    const userPrefix = userId ? `user-${userId}-` : 'guest-';
+    return `${userPrefix}sticker-labels`;
+  };
   
   // LocalStorageからラベルを読み込み
   useEffect(() => {
     try {
-      const storedLabels = localStorage.getItem(STORAGE_KEY);
+      const storageKey = getStorageKey();
+      const storedLabels = localStorage.getItem(storageKey);
       if (storedLabels) {
         const parsedLabels = JSON.parse(storedLabels);
         setLabels(parsedLabels);
@@ -33,12 +37,13 @@ export function useStickerLabels() {
     } catch (error) {
       console.error('Failed to load sticker labels from localStorage:', error);
     }
-  }, []);
+  }, [userId]);
   
   // LocalStorageにラベルを保存
   const saveLabels = (newLabels: StickerLabels) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newLabels));
+      const storageKey = getStorageKey();
+      localStorage.setItem(storageKey, JSON.stringify(newLabels));
       setLabels(newLabels);
     } catch (error) {
       console.error('Failed to save sticker labels to localStorage:', error);

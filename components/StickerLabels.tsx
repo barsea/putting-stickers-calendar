@@ -11,8 +11,12 @@ const stickerColors = {
   yellow: { bg: 'bg-yellow-500', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' }
 } as const;
 
-export default function StickerLabels() {
-  const { labels, updateLabel } = useStickerLabels();
+interface StickerLabelsProps {
+  userId?: string;
+}
+
+export default function StickerLabels({ userId }: StickerLabelsProps) {
+  const { labels, updateLabel } = useStickerLabels(userId);
   const [editingSticker, setEditingSticker] = useState<StickerType | null>(null);
   const [editValue, setEditValue] = useState('');
 
