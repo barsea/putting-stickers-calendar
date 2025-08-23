@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { StickerType, DayStickers } from '@/hooks/useStickers';
 
 interface CalendarProps {
-  onDateClick: (date: number) => void;
-  stickerDates: Set<number>;
+  onStickerClick: (date: number, stickerType: StickerType) => void;
+  getDayStickers: (date: number) => DayStickers;
 }
 
-export default function Calendar({ onDateClick, stickerDates }: CalendarProps) {
+export default function Calendar({ onStickerClick, getDayStickers }: CalendarProps) {
   const [currentDate] = useState(new Date());
   
   const year = currentDate.getFullYear();
@@ -124,27 +125,64 @@ export default function Calendar({ onDateClick, stickerDates }: CalendarProps) {
               className="h-24 border-r border-b last:border-r-0 flex flex-col relative"
             >
               {isCurrentMonth ? (
-                <button
-                  onClick={() => onDateClick(date)}
-                  className={`w-full h-full p-2 flex flex-col transition-colors relative hover:bg-gray-50
-                    ${stickerDates.has(date) ? 'bg-yellow-50' : ''}
-                  `}
-                >
+                <div className={`w-full h-full p-2 flex flex-col transition-colors relative hover:bg-gray-50`}>
                   <span className={`text-lg font-medium self-start
                     ${dayOfWeek === 0 ? 'text-red-600' : dayOfWeek === 6 ? 'text-blue-600' : 'text-gray-800'}
                   `}>
                     {date}
                   </span>
                   
-                  {/* ステッカー表示エリア */}
-                  <div className="flex-1 flex flex-wrap gap-1 mt-1">
-                    {stickerDates.has(date) && (
-                      <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                        <span className="text-sm">⭐</span>
-                      </div>
-                    )}
+                  {/* 4つのステッカー配置エリア */}
+                  <div className="flex-1 grid grid-cols-2 gap-1 mt-1">
+                    {/* 左上 - 赤 */}
+                    <button
+                      onClick={() => onStickerClick(date, 'red')}
+                      className="w-full h-full flex items-center justify-center hover:bg-red-50 rounded transition-colors"
+                    >
+                      {getDayStickers(date).red ? (
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                      ) : (
+                        <div className="w-4 h-4 border border-dashed border-red-300 rounded-full opacity-40"></div>
+                      )}
+                    </button>
+                    
+                    {/* 右上 - 青 */}
+                    <button
+                      onClick={() => onStickerClick(date, 'blue')}
+                      className="w-full h-full flex items-center justify-center hover:bg-blue-50 rounded transition-colors"
+                    >
+                      {getDayStickers(date).blue ? (
+                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                      ) : (
+                        <div className="w-4 h-4 border border-dashed border-blue-300 rounded-full opacity-40"></div>
+                      )}
+                    </button>
+                    
+                    {/* 左下 - 緑 */}
+                    <button
+                      onClick={() => onStickerClick(date, 'green')}
+                      className="w-full h-full flex items-center justify-center hover:bg-green-50 rounded transition-colors"
+                    >
+                      {getDayStickers(date).green ? (
+                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                      ) : (
+                        <div className="w-4 h-4 border border-dashed border-green-300 rounded-full opacity-40"></div>
+                      )}
+                    </button>
+                    
+                    {/* 右下 - 黄 */}
+                    <button
+                      onClick={() => onStickerClick(date, 'yellow')}
+                      className="w-full h-full flex items-center justify-center hover:bg-yellow-50 rounded transition-colors"
+                    >
+                      {getDayStickers(date).yellow ? (
+                        <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                      ) : (
+                        <div className="w-4 h-4 border border-dashed border-yellow-300 rounded-full opacity-40"></div>
+                      )}
+                    </button>
                   </div>
-                </button>
+                </div>
               ) : (
                 <div className="w-full h-full p-2 flex flex-col">
                   <span className={`text-lg font-medium self-start opacity-30
@@ -161,7 +199,13 @@ export default function Calendar({ onDateClick, stickerDates }: CalendarProps) {
       
       {/* 説明テキスト */}
       <div className="p-4 bg-gray-50 text-center text-sm text-gray-600 border-t">
-        日付をタップしてステッカーを貼ろう！複数のステッカーを貼ることができます。
+        各色のエリアをタップしてステッカーを貼ろう！<br/>
+        <span className="inline-flex items-center gap-1 mt-1">
+          <div className="w-3 h-3 bg-red-500 rounded-full"></div>赤
+          <div className="w-3 h-3 bg-blue-500 rounded-full ml-2"></div>青
+          <div className="w-3 h-3 bg-green-500 rounded-full ml-2"></div>緑
+          <div className="w-3 h-3 bg-yellow-500 rounded-full ml-2"></div>黄
+        </span>
       </div>
     </div>
   );

@@ -1,40 +1,50 @@
 interface StatsProps {
   totalStickers: number;
+  daysWithStickers: number;
   daysInMonth: number;
   percentage: number;
 }
 
-export default function Stats({ totalStickers, daysInMonth, percentage }: StatsProps) {
+export default function Stats({ totalStickers, daysWithStickers, daysInMonth, percentage }: StatsProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm border p-4 mt-4">
       <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">
         今月の記録
       </h3>
       
-      <div className="grid grid-cols-3 gap-4 text-center">
-        <div className="bg-blue-50 rounded-lg p-3">
-          <div className="text-2xl font-bold text-blue-600">
+      <div className="grid grid-cols-4 gap-3 text-center">
+        <div className="bg-orange-50 rounded-lg p-3">
+          <div className="text-xl font-bold text-orange-600">
             {totalStickers}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs text-gray-600">
+            総ステッカー
+          </div>
+        </div>
+        
+        <div className="bg-blue-50 rounded-lg p-3">
+          <div className="text-xl font-bold text-blue-600">
+            {daysWithStickers}
+          </div>
+          <div className="text-xs text-gray-600">
             実行日数
           </div>
         </div>
         
         <div className="bg-green-50 rounded-lg p-3">
-          <div className="text-2xl font-bold text-green-600">
+          <div className="text-xl font-bold text-green-600">
             {percentage}%
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs text-gray-600">
             達成率
           </div>
         </div>
         
         <div className="bg-purple-50 rounded-lg p-3">
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-xl font-bold text-purple-600">
             {daysInMonth}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs text-gray-600">
             総日数
           </div>
         </div>

@@ -5,7 +5,7 @@ import Stats from '@/components/Stats';
 import { useStickers } from '@/hooks/useStickers';
 
 export default function Home() {
-  const { stickerDates, toggleSticker, getStats } = useStickers();
+  const { getDayStickers, toggleSticker, getStats } = useStickers();
   const stats = getStats();
 
   return (
@@ -22,12 +22,13 @@ export default function Home() {
 
         <div className="space-y-6">
           <Calendar 
-            onDateClick={toggleSticker}
-            stickerDates={stickerDates}
+            onStickerClick={toggleSticker}
+            getDayStickers={getDayStickers}
           />
           
           <Stats 
             totalStickers={stats.totalStickers}
+            daysWithStickers={stats.daysWithStickers}
             daysInMonth={stats.daysInMonth}
             percentage={stats.percentage}
           />
