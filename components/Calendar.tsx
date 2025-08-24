@@ -1,6 +1,4 @@
 'use client';
-
-import { useState } from 'react';
 import { StickerType, DayStickers } from '@/hooks/useStickers';
 import StickerLabels from './StickerLabels';
 
@@ -8,17 +6,41 @@ interface CalendarProps {
   onStickerClick: (date: number, stickerType: StickerType) => void;
   getDayStickers: (date: number) => DayStickers;
   userId?: string;
+  year: number;
+  month: number;
+  onMonthChange: (year: number, month: number) => void;
 }
 
-export default function Calendar({ onStickerClick, getDayStickers, userId }: CalendarProps) {
-  const [currentDate] = useState(new Date());
-  
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange }: CalendarProps) {
+  // 前月・次月に移動する関数
+  const goToPrevMonth = () => {
+    if (month === 1) {
+      onMonthChange(year - 1, 12);
+    } else {
+      onMonthChange(year, month - 1);
+    }
+  };
+
+  const goToNextMonth = () => {
+    if (month === 12) {
+      onMonthChange(year + 1, 1);
+    } else {
+      onMonthChange(year, month + 1);
+    }
+  };
+
+  // 現在月に戻る関数
+  const goToCurrentMonth = () => {
+    const now = new Date();
+    onMonthChange(now.getFullYear(), now.getMonth() + 1);
+  };
+
+  // 月は1から始まるので、Dateオブジェクトで使用する際は-1する
+  const displayMonth = month - 1;
   
   // 月の最初の日と最後の日を取得
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
+  const firstDay = new Date(year, displayMonth, 1);
+  const lastDay = new Date(year, displayMonth + 1, 0);
   const daysInMonth = lastDay.getDate();
   
   // 月の最初の日が何曜日かを取得（日曜日を0とする）
@@ -32,6 +54,10 @@ export default function Calendar({ onStickerClick, getDayStickers, userId }: Cal
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+
+  // 現在月かどうかをチェック
+  const now = new Date();
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
   
   // 和暦を計算（令和は2019年から）
   const getJapaneseEra = (year: number) => {
@@ -44,7 +70,7 @@ export default function Calendar({ onStickerClick, getDayStickers, userId }: Cal
     const grid = [];
     
     // 前月の最後の日を取得
-    const prevMonth = new Date(year, month - 1, 0);
+    const prevMonth = new Date(year, displayMonth - 1, 0);
     const prevMonthLastDate = prevMonth.getDate();
     
     // 前月の日付を追加
@@ -83,15 +109,51 @@ export default function Calendar({ onStickerClick, getDayStickers, userId }: Cal
   
   return (
     <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      {/* 月移動コントロール */}
+      <div className="bg-gray-50 border-b px-4 py-3">
+        <div className="flex items-center justify-between">
+          <button 
+            onClick={goToPrevMonth}
+            className="flex items-center px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            前月
+          </button>
+          
+          <div className="flex items-center space-x-2">
+            {!isCurrentMonth && (
+              <button
+                onClick={goToCurrentMonth}
+                className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+              >
+                今月へ
+              </button>
+            )}
+          </div>
+          
+          <button 
+            onClick={goToNextMonth}
+            className="flex items-center px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+          >
+            次月
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
       {/* カレンダーヘッダー - 画像のような大きな表示 */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-bold">
-            {month + 1}
+            {month}
           </h1>
           <div className="text-right">
             <div className="text-2xl font-semibold">
-              {monthNamesEn[month]}
+              {monthNamesEn[displayMonth]}
             </div>
             <div className="text-lg">
               {year} ({getJapaneseEra(year)})

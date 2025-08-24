@@ -16,11 +16,22 @@ export default function Home() {
   const { authState, signUp, login, logout } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>('calendar');
   
+  // 年月状態管理
+  const now = new Date();
+  const [selectedYear, setSelectedYear] = useState(now.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
+  
   const userId = authState.user?.id;
-  const { getDayStickers, toggleSticker, getStats } = useStickers(userId);
+  const { getDayStickers, toggleSticker, getStats } = useStickers(userId, selectedYear, selectedMonth);
   const stats = getStats();
 
-  const handleSignUp = async (data: any) => {
+  // 月変更ハンドラー
+  const handleMonthChange = (year: number, month: number) => {
+    setSelectedYear(year);
+    setSelectedMonth(month);
+  };
+
+  const handleSignUp = async (data: { email: string; password: string; displayName: string }) => {
     const result = await signUp(data);
     if (result.success) {
       setViewMode('calendar');
@@ -28,7 +39,7 @@ export default function Home() {
     return result;
   };
 
-  const handleLogin = async (data: any) => {
+  const handleLogin = async (data: { email: string; password: string }) => {
     const result = await login(data);
     if (result.success) {
       setViewMode('calendar');
@@ -87,6 +98,9 @@ export default function Home() {
             onStickerClick={toggleSticker}
             getDayStickers={getDayStickers}
             userId={userId}
+            year={selectedYear}
+            month={selectedMonth}
+            onMonthChange={handleMonthChange}
           />
           
           <Stats 
@@ -94,6 +108,8 @@ export default function Home() {
             daysWithStickers={stats.daysWithStickers}
             daysInMonth={stats.daysInMonth}
             percentage={stats.percentage}
+            year={stats.year}
+            month={stats.month}
           />
         </div>
       </div>

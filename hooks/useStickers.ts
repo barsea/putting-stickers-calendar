@@ -11,22 +11,26 @@ export interface DayStickers {
   yellow: boolean;
 }
 
-export function useStickers(userId?: string) {
+export function useStickers(userId?: string, selectedYear?: number, selectedMonth?: number) {
   const [stickerData, setStickerData] = useState<Map<number, DayStickers>>(new Map());
   
-  // LocalStorageキーを現在の年月とユーザーIDで生成
-  const getStorageKey = (userId?: string) => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; // 月は0から始まるので+1
+  // 現在の日付を取得（デフォルト値として使用）
+  const now = new Date();
+  const currentYear = selectedYear ?? now.getFullYear();
+  const currentMonth = selectedMonth ?? (now.getMonth() + 1);
+  
+  // LocalStorageキーを指定された年月とユーザーIDで生成
+  const getStorageKey = (userId?: string, year?: number, month?: number) => {
+    const targetYear = year ?? currentYear;
+    const targetMonth = month ?? currentMonth;
     const userPrefix = userId ? `user-${userId}-` : 'guest-';
-    return `${userPrefix}sticker-calendar-${year}-${month}`;
+    return `${userPrefix}sticker-calendar-${targetYear}-${targetMonth}`;
   };
   
   // LocalStorageからデータを読み込み
   useEffect(() => {
     try {
-      const storageKey = getStorageKey(userId);
+      const storageKey = getStorageKey(userId, currentYear, currentMonth);
       const storedData = localStorage.getItem(storageKey);
       if (storedData) {
         const dataObject = JSON.parse(storedData);
@@ -47,16 +51,19 @@ export function useStickers(userId?: string) {
         }
         
         setStickerData(dataMap);
+      } else {
+        // データがない場合は空のMapに設定
+        setStickerData(new Map());
       }
     } catch (error) {
       console.error('Failed to load sticker data from localStorage:', error);
     }
-  }, [userId]);
+  }, [userId, currentYear, currentMonth]);
   
   // LocalStorageにデータを保存
   const saveStickerData = (data: Map<number, DayStickers>) => {
     try {
-      const storageKey = getStorageKey(userId);
+      const storageKey = getStorageKey(userId, currentYear, currentMonth);
       const dataObject: Record<number, DayStickers> = {};
       data.forEach((stickers, date) => {
         dataObject[date] = stickers;
@@ -104,15 +111,16 @@ export function useStickers(userId?: string) {
       }
     });
     
-    const currentDate = new Date();
-    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
     const percentage = Math.round((daysWithStickers / daysInMonth) * 100);
     
     return {
       totalStickers,
       daysWithStickers,
       daysInMonth,
-      percentage
+      percentage,
+      year: currentYear,
+      month: currentMonth
     };
   };
   

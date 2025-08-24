@@ -3,13 +3,25 @@ interface StatsProps {
   daysWithStickers: number;
   daysInMonth: number;
   percentage: number;
+  year: number;
+  month: number;
 }
 
-export default function Stats({ totalStickers, daysWithStickers, daysInMonth, percentage }: StatsProps) {
+export default function Stats({ totalStickers, daysWithStickers, daysInMonth, percentage, year, month }: StatsProps) {
+  // 現在月かどうかをチェック
+  const now = new Date();
+  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1;
+  
+  // 月名の配列
+  const monthNames = [
+    '1月', '2月', '3月', '4月', '5月', '6月',
+    '7月', '8月', '9月', '10月', '11月', '12月'
+  ];
+
   return (
     <div className="bg-white rounded-lg shadow-sm border p-4 mt-4">
       <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">
-        今月の記録
+        {isCurrentMonth ? '今月' : `${year}年${monthNames[month - 1]}`}の記録
       </h3>
       
       <div className="grid grid-cols-4 gap-3 text-center">
