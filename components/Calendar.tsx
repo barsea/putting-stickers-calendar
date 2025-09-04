@@ -201,48 +201,52 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                     {/* 左上 - 赤 */}
                     <button
                       onClick={() => onStickerClick(date, 'red')}
-                      className="w-full h-full flex items-center justify-center hover:bg-red-50 rounded transition-colors"
+                      className="w-full h-full flex items-center justify-center hover:bg-red-100 rounded transition-colors bg-red-25"
+                      style={{ backgroundColor: getDayStickers(date).red ? undefined : 'rgba(239, 68, 68, 0.05)' }}
                     >
                       {getDayStickers(date).red ? (
                         <div className="w-4 h-4 bg-red-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-red-300 rounded-full opacity-40"></div>
+                        <div className="w-4 h-4 border border-dashed border-red-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
                     {/* 右上 - 青 */}
                     <button
                       onClick={() => onStickerClick(date, 'blue')}
-                      className="w-full h-full flex items-center justify-center hover:bg-blue-50 rounded transition-colors"
+                      className="w-full h-full flex items-center justify-center hover:bg-blue-100 rounded transition-colors"
+                      style={{ backgroundColor: getDayStickers(date).blue ? undefined : 'rgba(59, 130, 246, 0.05)' }}
                     >
                       {getDayStickers(date).blue ? (
                         <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-blue-300 rounded-full opacity-40"></div>
+                        <div className="w-4 h-4 border border-dashed border-blue-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
                     {/* 左下 - 緑 */}
                     <button
                       onClick={() => onStickerClick(date, 'green')}
-                      className="w-full h-full flex items-center justify-center hover:bg-green-50 rounded transition-colors"
+                      className="w-full h-full flex items-center justify-center hover:bg-green-100 rounded transition-colors"
+                      style={{ backgroundColor: getDayStickers(date).green ? undefined : 'rgba(34, 197, 94, 0.05)' }}
                     >
                       {getDayStickers(date).green ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-green-300 rounded-full opacity-40"></div>
+                        <div className="w-4 h-4 border border-dashed border-green-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
                     {/* 右下 - 黄 */}
                     <button
                       onClick={() => onStickerClick(date, 'yellow')}
-                      className="w-full h-full flex items-center justify-center hover:bg-yellow-50 rounded transition-colors"
+                      className="w-full h-full flex items-center justify-center hover:bg-yellow-100 rounded transition-colors"
+                      style={{ backgroundColor: getDayStickers(date).yellow ? undefined : 'rgba(234, 179, 8, 0.05)' }}
                     >
                       {getDayStickers(date).yellow ? (
                         <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-yellow-300 rounded-full opacity-40"></div>
+                        <div className="w-4 h-4 border border-dashed border-yellow-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                   </div>
