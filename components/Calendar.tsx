@@ -205,9 +205,9 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                       style={{ backgroundColor: getDayStickers(date).red ? undefined : 'rgba(239, 68, 68, 0.05)' }}
                     >
                       {getDayStickers(date).red ? (
-                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                        <div className="w-6 h-6 bg-red-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-red-300 rounded-full opacity-60"></div>
+                        <div className="w-6 h-6 border border-dashed border-red-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
@@ -218,9 +218,9 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                       style={{ backgroundColor: getDayStickers(date).blue ? undefined : 'rgba(59, 130, 246, 0.05)' }}
                     >
                       {getDayStickers(date).blue ? (
-                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-blue-300 rounded-full opacity-60"></div>
+                        <div className="w-6 h-6 border border-dashed border-blue-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
@@ -231,9 +231,9 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                       style={{ backgroundColor: getDayStickers(date).green ? undefined : 'rgba(34, 197, 94, 0.05)' }}
                     >
                       {getDayStickers(date).green ? (
-                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        <div className="w-6 h-6 bg-green-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-green-300 rounded-full opacity-60"></div>
+                        <div className="w-6 h-6 border border-dashed border-green-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                     
@@ -244,9 +244,9 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                       style={{ backgroundColor: getDayStickers(date).yellow ? undefined : 'rgba(234, 179, 8, 0.05)' }}
                     >
                       {getDayStickers(date).yellow ? (
-                        <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                        <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
                       ) : (
-                        <div className="w-4 h-4 border border-dashed border-yellow-300 rounded-full opacity-60"></div>
+                        <div className="w-6 h-6 border border-dashed border-yellow-300 rounded-full opacity-60"></div>
                       )}
                     </button>
                   </div>
