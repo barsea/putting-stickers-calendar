@@ -62,15 +62,39 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       </div>
       
-      {percentage >= 80 && (
+      {percentage === 100 && (
+        <div className="mt-4 text-center">
+          <div className="bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-900 px-3 py-2 rounded-full text-sm font-medium border-2 border-yellow-300">
+            ✨🏆 PERFECT! 完璧な達成です！ 🏆✨
+          </div>
+        </div>
+      )}
+      
+      {percentage !== 100 && daysWithStickers >= 25 && (
         <div className="mt-4 text-center">
           <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full text-sm font-medium">
+            🏆 驚異的な継続力です！
+          </div>
+        </div>
+      )}
+      
+      {daysWithStickers >= 20 && daysWithStickers < 25 && (
+        <div className="mt-4 text-center">
+          <div className="bg-orange-100 text-orange-800 px-3 py-2 rounded-full text-sm font-medium">
             🎉 素晴らしい継続力です！
           </div>
         </div>
       )}
       
-      {percentage >= 50 && percentage < 80 && (
+      {daysWithStickers >= 15 && daysWithStickers < 20 && (
+        <div className="mt-4 text-center">
+          <div className="bg-purple-100 text-purple-800 px-3 py-2 rounded-full text-sm font-medium">
+            ✨ 習慣が定着してきました！
+          </div>
+        </div>
+      )}
+      
+      {daysWithStickers >= 10 && daysWithStickers < 15 && (
         <div className="mt-4 text-center">
           <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium">
             👍 順調に続けています！
@@ -78,9 +102,17 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       )}
       
-      {totalStickers > 0 && percentage < 50 && (
+      {daysWithStickers >= 5 && daysWithStickers < 10 && (
         <div className="mt-4 text-center">
           <div className="bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium">
+            🌱 良いスタートです！
+          </div>
+        </div>
+      )}
+      
+      {daysWithStickers >= 1 && daysWithStickers < 5 && (
+        <div className="mt-4 text-center">
+          <div className="bg-gray-100 text-gray-800 px-3 py-2 rounded-full text-sm font-medium">
             💪 コツコツ頑張りましょう！
           </div>
         </div>
