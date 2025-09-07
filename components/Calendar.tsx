@@ -1,6 +1,7 @@
 'use client';
 import { StickerType, DayStickers } from '@/hooks/useStickers';
 import StickerLabels from './StickerLabels';
+import { useState } from 'react';
 
 interface CalendarProps {
   onStickerClick: (date: number, stickerType: StickerType) => void;
@@ -12,6 +13,35 @@ interface CalendarProps {
 }
 
 export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange }: CalendarProps) {
+  // アニメーション状態を管理
+  const [animatingStickers, setAnimatingStickers] = useState<{[key: string]: string}>({});
+  
+  // ステッカークリック時のアニメーション付きハンドラー
+  const handleStickerClick = (date: number, stickerType: StickerType) => {
+    const key = `${date}-${stickerType}`;
+    const currentStickers = getDayStickers(date);
+    const isCurrentlyPlaced = currentStickers[stickerType];
+    
+    // アニメーションクラスを設定
+    const animationClass = isCurrentlyPlaced ? 'sticker-peeling' : 'sticker-placing';
+    setAnimatingStickers(prev => ({
+      ...prev,
+      [key]: animationClass
+    }));
+    
+    // アニメーション完了後にクラスをクリア
+    setTimeout(() => {
+      setAnimatingStickers(prev => {
+        const newState = { ...prev };
+        delete newState[key];
+        return newState;
+      });
+    }, isCurrentlyPlaced ? 600 : 800); // peelingは600ms、placingは800ms
+    
+    // 元のクリック処理を実行
+    onStickerClick(date, stickerType);
+  };
+
   // 前月・次月に移動する関数
   const goToPrevMonth = () => {
     if (month === 1) {
@@ -198,57 +228,32 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                   
                   {/* 4つのステッカー配置エリア */}
                   <div className="flex-1 grid grid-cols-2 gap-1 mt-1">
-                    {/* 左上 - 赤 */}
-                    <button
-                      onClick={() => onStickerClick(date, 'red')}
-                      className="w-full h-full flex items-center justify-center hover:bg-red-100 rounded transition-colors bg-red-25"
-                      style={{ backgroundColor: getDayStickers(date).red ? undefined : 'rgba(239, 68, 68, 0.05)' }}
-                    >
-                      {getDayStickers(date).red ? (
-                        <div className="w-6 h-6 bg-red-500 rounded-full"></div>
-                      ) : (
-                        <div className="w-6 h-6 border border-dashed border-red-300 rounded-full opacity-60"></div>
-                      )}
-                    </button>
-                    
-                    {/* 右上 - 青 */}
-                    <button
-                      onClick={() => onStickerClick(date, 'blue')}
-                      className="w-full h-full flex items-center justify-center hover:bg-blue-100 rounded transition-colors"
-                      style={{ backgroundColor: getDayStickers(date).blue ? undefined : 'rgba(59, 130, 246, 0.05)' }}
-                    >
-                      {getDayStickers(date).blue ? (
-                        <div className="w-6 h-6 bg-blue-500 rounded-full"></div>
-                      ) : (
-                        <div className="w-6 h-6 border border-dashed border-blue-300 rounded-full opacity-60"></div>
-                      )}
-                    </button>
-                    
-                    {/* 左下 - 緑 */}
-                    <button
-                      onClick={() => onStickerClick(date, 'green')}
-                      className="w-full h-full flex items-center justify-center hover:bg-green-100 rounded transition-colors"
-                      style={{ backgroundColor: getDayStickers(date).green ? undefined : 'rgba(34, 197, 94, 0.05)' }}
-                    >
-                      {getDayStickers(date).green ? (
-                        <div className="w-6 h-6 bg-green-500 rounded-full"></div>
-                      ) : (
-                        <div className="w-6 h-6 border border-dashed border-green-300 rounded-full opacity-60"></div>
-                      )}
-                    </button>
-                    
-                    {/* 右下 - 黄 */}
-                    <button
-                      onClick={() => onStickerClick(date, 'yellow')}
-                      className="w-full h-full flex items-center justify-center hover:bg-yellow-100 rounded transition-colors"
-                      style={{ backgroundColor: getDayStickers(date).yellow ? undefined : 'rgba(234, 179, 8, 0.05)' }}
-                    >
-                      {getDayStickers(date).yellow ? (
-                        <div className="w-6 h-6 bg-yellow-500 rounded-full"></div>
-                      ) : (
-                        <div className="w-6 h-6 border border-dashed border-yellow-300 rounded-full opacity-60"></div>
-                      )}
-                    </button>
+                    {(['red', 'blue', 'green', 'yellow'] as const).map((color) => {
+                      const isPlaced = getDayStickers(date)[color];
+                      const animationKey = `${date}-${color}`;
+                      const animationClass = animatingStickers[animationKey] || '';
+                      const colorConfig = {
+                        red: { bg: 'bg-red-500', hover: 'hover:bg-red-100', border: 'border-red-300', bgColor: 'rgba(239, 68, 68, 0.05)' },
+                        blue: { bg: 'bg-blue-500', hover: 'hover:bg-blue-100', border: 'border-blue-300', bgColor: 'rgba(59, 130, 246, 0.05)' },
+                        green: { bg: 'bg-green-500', hover: 'hover:bg-green-100', border: 'border-green-300', bgColor: 'rgba(34, 197, 94, 0.05)' },
+                        yellow: { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-100', border: 'border-yellow-300', bgColor: 'rgba(234, 179, 8, 0.05)' }
+                      };
+                      
+                      return (
+                        <button
+                          key={color}
+                          onClick={() => handleStickerClick(date, color)}
+                          className={`w-full h-full flex items-center justify-center ${colorConfig[color].hover} rounded transition-colors sticker-container`}
+                          style={{ backgroundColor: isPlaced ? undefined : colorConfig[color].bgColor }}
+                        >
+                          {isPlaced ? (
+                            <div className={`sticker sticker-placed w-6 h-6 ${colorConfig[color].bg} rounded-full ${animationClass}`}></div>
+                          ) : (
+                            <div className={`sticker sticker-empty w-6 h-6 border border-dashed ${colorConfig[color].border} rounded-full opacity-60 ${animationClass}`}></div>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ) : (
