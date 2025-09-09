@@ -71,7 +71,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-2 sm:p-4">
       <div className="max-w-4xl mx-auto">
         <Header 
           user={authState.isAuthenticated ? authState.user : undefined}
@@ -80,7 +80,7 @@ export default function Home() {
           onShowLogin={() => setViewMode('login')}
         />
 
-        <div className="space-y-6">
+        <div className="space-y-3 sm:space-y-6">
           <Calendar 
             onStickerClick={toggleSticker}
             getDayStickers={getDayStickers}

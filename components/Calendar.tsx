@@ -176,16 +176,16 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
       </div>
 
       {/* カレンダーヘッダー - 画像のような大きな表示 */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
             {month}
           </h1>
           <div className="text-right">
-            <div className="text-2xl font-semibold">
+            <div className="text-lg sm:text-xl md:text-2xl font-semibold">
               {monthNamesEn[displayMonth]}
             </div>
-            <div className="text-lg">
+            <div className="text-sm sm:text-base md:text-lg">
               {year} ({getJapaneseEra(year)})
             </div>
           </div>
@@ -197,7 +197,7 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
         {weekDays.map((day, index) => (
           <div
             key={index}
-            className={`text-center py-3 text-base font-medium border-r last:border-r-0
+            className={`text-center py-2 sm:py-3 text-sm sm:text-base font-medium border-r last:border-r-0
               ${index === 0 ? 'text-red-600' : index === 6 ? 'text-blue-600' : 'text-gray-700'}
             `}
           >
@@ -216,18 +216,18 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
           return (
             <div
               key={index}
-              className="h-24 border-r border-b last:border-r-0 flex flex-col relative"
+              className="h-16 sm:h-20 md:h-24 border-r border-b last:border-r-0 flex flex-col relative"
             >
               {isCurrentMonth ? (
-                <div className={`w-full h-full p-2 flex flex-col transition-colors relative hover:bg-gray-50`}>
-                  <span className={`text-lg font-medium self-start
+                <div className={`w-full h-full p-1 sm:p-2 flex flex-col transition-colors relative hover:bg-gray-50`}>
+                  <span className={`text-sm sm:text-base md:text-lg font-medium self-start
                     ${dayOfWeek === 0 ? 'text-red-600' : dayOfWeek === 6 ? 'text-blue-600' : 'text-gray-800'}
                   `}>
                     {date}
                   </span>
                   
                   {/* 4つのステッカー配置エリア */}
-                  <div className="flex-1 grid grid-cols-2 gap-1 mt-1">
+                  <div className="flex-1 grid grid-cols-2 gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
                     {(['red', 'blue', 'green', 'yellow'] as const).map((color) => {
                       const isPlaced = getDayStickers(date)[color];
                       const animationKey = `${date}-${color}`;
@@ -247,9 +247,9 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                           style={{ backgroundColor: isPlaced ? undefined : colorConfig[color].bgColor }}
                         >
                           {isPlaced ? (
-                            <div className={`sticker sticker-placed w-6 h-6 ${colorConfig[color].bg} rounded-full ${animationClass}`}></div>
+                            <div className={`sticker sticker-placed w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${colorConfig[color].bg} rounded-full ${animationClass}`}></div>
                           ) : (
-                            <div className={`sticker sticker-empty w-6 h-6 border border-dashed ${colorConfig[color].border} rounded-full opacity-60 ${animationClass}`}></div>
+                            <div className={`sticker sticker-empty w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border border-dashed ${colorConfig[color].border} rounded-full opacity-60 ${animationClass}`}></div>
                           )}
                         </button>
                       );
@@ -257,8 +257,8 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full p-2 flex flex-col">
-                  <span className={`text-lg font-medium self-start opacity-30
+                <div className="w-full h-full p-1 sm:p-2 flex flex-col">
+                  <span className={`text-sm sm:text-base md:text-lg font-medium self-start opacity-30
                     ${dayOfWeek === 0 ? 'text-red-400' : dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-400'}
                   `}>
                     {date}
