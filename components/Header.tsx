@@ -38,7 +38,7 @@ export default function Header({ user, onLogout, onShowSignUp, onShowLogin }: He
       </div>
       
       {/* 右側のユーザーエリア */}
-      <div className="flex justify-end flex-shrink-0 w-20 sm:w-40">
+      <div className="flex justify-end sm:justify-center flex-shrink-0 w-20 sm:w-40">
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full">
