@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { StickerType } from '@/hooks/useStickers';
 import { useStickerLabels } from '@/hooks/useStickerLabels';
 
@@ -19,6 +19,7 @@ export default function StickerLabels({ userId }: StickerLabelsProps) {
   const { labels, updateLabel } = useStickerLabels(userId);
   const [editingSticker, setEditingSticker] = useState<StickerType | null>(null);
   const [editValue, setEditValue] = useState('');
+  const isComposingRef = useRef(false);
 
   const startEditing = (stickerType: StickerType) => {
     setEditingSticker(stickerType);
@@ -38,9 +39,19 @@ export default function StickerLabels({ userId }: StickerLabelsProps) {
     setEditValue('');
   };
 
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+
+  const handleCompositionEnd = () => {
+    isComposingRef.current = false;
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      saveEdit();
+      if (!isComposingRef.current) {
+        saveEdit();
+      }
     } else if (e.key === 'Escape') {
       cancelEdit();
     }
@@ -70,6 +81,8 @@ export default function StickerLabels({ userId }: StickerLabelsProps) {
                   onChange={(e) => setEditValue(e.target.value)}
                   onBlur={saveEdit}
                   onKeyDown={handleKeyDown}
+                  onCompositionStart={handleCompositionStart}
+                  onCompositionEnd={handleCompositionEnd}
                   maxLength={20}
                   className="flex-1 px-2 py-1.5 sm:py-1 text-xs sm:text-sm border border-gray-300 rounded focus:outline-none focus:border-blue-400 bg-white"
                   placeholder="ラベルを入力..."
