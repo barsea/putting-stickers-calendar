@@ -28,8 +28,8 @@ export default function Header({ user, onLogout, onShowSignUp, onShowLogin }: He
       {/* 中央のタイトル */}
       <div className={`${user ? 'text-center' : 'text-left sm:text-center'} flex-1 ${user ? 'flex justify-center items-center sm:block' : 'flex items-center sm:block'}`}>
         <div>
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-0 sm:mb-1 whitespace-nowrap">
-            ステッカーカレンダー
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent mb-0 sm:mb-1 whitespace-nowrap tracking-tight drop-shadow-sm">
+            Stickers
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 whitespace-nowrap hidden sm:block">
             習慣化をサポートする、シンプルなカレンダーアプリ
