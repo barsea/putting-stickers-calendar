@@ -8,6 +8,7 @@ import SignUpForm from '@/components/SignUpForm';
 import LoginForm from '@/components/LoginForm';
 import { useStickers } from '@/hooks/useStickers';
 import { useAuth } from '@/hooks/useAuth';
+import { SignUpData } from '@/types/auth';
 
 type ViewMode = 'calendar' | 'signup' | 'login';
 
@@ -30,7 +31,7 @@ export default function Home() {
     setSelectedMonth(month);
   };
 
-  const handleSignUp = async (data: { email: string; password: string; displayName: string }) => {
+  const handleSignUp = async (data: SignUpData) => {
     const result = await signUp(data);
     if (result.success) {
       setViewMode('calendar');
@@ -74,7 +75,7 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-2 sm:p-4">
       <div className="max-w-4xl mx-auto">
         <Header 
-          user={authState.isAuthenticated ? authState.user : undefined}
+          user={authState.isAuthenticated && authState.user ? authState.user : undefined}
           onLogout={handleLogout}
           onShowSignUp={() => setViewMode('signup')}
           onShowLogin={() => setViewMode('login')}
