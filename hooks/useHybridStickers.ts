@@ -7,14 +7,19 @@ import { DayStickers, StickerType } from '@/types/database';
 export function useHybridStickers(
   userId?: string,
   selectedYear?: number,
-  selectedMonth?: number,
-  isSupabaseAuth = false
+  selectedMonth?: number
 ) {
   const localStickers = useStickers(userId, selectedYear, selectedMonth);
   const supabaseStickers = useSupabaseStickers(userId, selectedYear, selectedMonth);
 
-  // Supabase認証時はSupabaseのhookを使用、それ以外はLocalStorageのhookを使用
-  if (isSupabaseAuth && userId) {
+  // Supabase環境変数が設定されている場合のみSupabaseを使用
+  const hasSupabaseEnv = !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY
+  );
+
+  // Supabase環境が利用可能でユーザーIDがある場合はSupabaseのhookを使用
+  if (hasSupabaseEnv && userId) {
     return {
       ...supabaseStickers,
       // エラーハンドリング用の追加情報

@@ -5,16 +5,17 @@ import { SupabaseClient } from '@supabase/supabase-js';
 export class DatabaseService {
   private supabase: SupabaseClient<Database> = createClient();
 
+
   // ユーザー関連の操作
   async createUser(id: string, name: string, email: string) {
     const { data, error } = await this.supabase
       .from('users')
       .insert({
-        id,
+        id, // カスタム認証システムのID（文字列）
         name,
         email,
-        password_hash: '', // Supabase Authが管理するため空文字
-      } as any)
+        password_hash: '', // カスタム認証用の空文字
+      })
       .select()
       .single();
 
@@ -70,6 +71,10 @@ export class DatabaseService {
       throw error;
     }
 
+    return this.convertToStickerMap(data);
+  }
+
+  private convertToStickerMap(data: any[]): Map<number, DayStickers> {
     // データをMapに変換
     const stickerMap = new Map<number, DayStickers>();
     data?.forEach((sticker: any) => {

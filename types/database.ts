@@ -13,7 +13,7 @@ export interface Database {
           updated_at: string;
         };
         Insert: {
-          id?: string;
+          id: string; // カスタム認証用にrequiredに変更
           name: string;
           email: string;
           password_hash: string;
