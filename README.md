@@ -29,10 +29,12 @@
 - ✅ **達成報酬機能**: 達成率に応じたお祝いメッセージ表示
 - ✅ **ユーザー認証機能**: 新規登録・ログイン・ユーザー別データ管理
 - ✅ **過去のカレンダー表示**: 前月・翌月への遷移、月選択機能
+- ✅ **Supabase連携**: クラウド同期・データ永続化・認証統合
+- ✅ **データ移行機能**: LocalStorageからSupabaseへの自動移行完了
+- ✅ **ハイブリッド構成**: オフライン対応 + クラウド同期
 
 ### 今後の実装予定
 - ⏳ **ステッカーカスタマイズ**: 複数の種類から選択可能
-- ⏳ **データ移行機能**: クラウド同期への移行サポート
 
 ## 🛠 技術仕様
 
@@ -42,9 +44,11 @@
 - **スタイリング**: TailwindCSS
 - **状態管理**: React State
 
-### データ保存
-- **現在**: LocalStorage
-- **将来**: Firebase/Supabase（共有機能追加時）
+### バックエンド・データ
+- **認証・データベース**: Supabase
+- **ハイブリッド構成**: LocalStorage ⇔ Supabase自動同期
+- **オフライン対応**: LocalStorageでの完全動作
+- **データ移行**: 既存LocalStorageからSupabaseへの自動移行
 
 ## 🚀 セットアップ
 
@@ -61,9 +65,26 @@ cd putting-stickers-calendar
 # 依存関係のインストール
 npm install
 
+# 環境変数の設定
+cp .env.local.example .env.local
+# .env.localにSupabaseの設定を記入
+
 # 開発サーバー起動
 npm run dev
 ```
+
+### Supabase設定（オプション）
+クラウド同期機能を利用する場合：
+
+1. [Supabase](https://supabase.com)でプロジェクトを作成
+2. `.env.local`に以下を設定：
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-project-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   ```
+3. `supabase-setup.sql`を実行してテーブルを作成
+
+**注意**: Supabase設定なしでもLocalStorageモードで完全に動作します。
 
 ブラウザで http://localhost:3000 を開いてアプリケーションにアクセスできます。
 
@@ -109,11 +130,18 @@ npm run dev
 
 ## 🚧 開発状況
 
-**現在のステータス**: MVP機能完了、拡張機能実装済み  
-**最終更新**: 2025-09-07  
+**現在のステータス**: 完全機能実装完了、Supabase連携完了
+**最終更新**: 2025-09-17
 **動作確認**: デスクトップ・スマートフォン両環境で完了
 
-### 最新の更新内容（2025-09-07）
+### Supabase連携完了（2025-09-17）
+- **ハイブリッド構成**: LocalStorage + Supabase連携完了
+- **認証システム**: Supabase Auth完全統合
+- **データ移行**: 既存LocalStorageデータのSupabase自動移行完了
+- **オフライン対応**: ネットワークなしでも完全動作
+- **クラウド同期**: リアルタイムデータ同期機能
+
+### 前回更新内容（2025-09-07）
 - **ステッカーめくりアニメーション機能**を追加
   - 3D CSS Transformsを使った紙のめくれ効果
   - 貼り付け・剥がし時の滑らかなキーフレームアニメーション
