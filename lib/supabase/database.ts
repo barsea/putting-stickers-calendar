@@ -107,12 +107,18 @@ export class DatabaseService {
         blue: stickers.blue,
         green: stickers.green,
         yellow: stickers.yellow,
-      } as any)
+      })
       .select()
       .single();
 
     if (error) {
-      console.error('Failed to upsert sticker:', error);
+      console.error('Failed to upsert sticker:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        data: { userId, year, month, day, stickers }
+      });
       throw error;
     }
 

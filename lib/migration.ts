@@ -157,11 +157,15 @@ export class DataMigrationService {
         migratedStickers
       };
     } catch (error) {
-      console.error('Failed to migrate guest data:', error);
+      console.error('Failed to migrate guest data:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        error: error
+      });
       return {
         success: false,
         migratedStickers: 0,
-        error: 'データ移行に失敗しました'
+        error: `データ移行に失敗しました: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }
@@ -200,11 +204,15 @@ export class DataMigrationService {
         migratedStickers
       };
     } catch (error) {
-      console.error('Failed to migrate user data:', error);
+      console.error('Failed to migrate user data:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+        error: error
+      });
       return {
         success: false,
         migratedStickers: 0,
-        error: 'データ移行に失敗しました'
+        error: `データ移行に失敗しました: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }
