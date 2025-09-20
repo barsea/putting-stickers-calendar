@@ -135,6 +135,17 @@ export class DataMigrationService {
 
       let migratedStickers = 0;
 
+      // ユーザーがSupabaseに存在することを確認
+      try {
+        const user = await db.getUserById(supabaseUserId);
+        if (!user) {
+          throw new Error(`User ${supabaseUserId} not found in Supabase`);
+        }
+      } catch (error) {
+        console.error('User verification failed:', error);
+        throw new Error(`Failed to verify user existence: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+
       // ステッカーデータの移行
       for (const [yearMonth, monthData] of stickerData.entries()) {
         const [year, month] = yearMonth.split('-').map(Number);
@@ -158,9 +169,11 @@ export class DataMigrationService {
       };
     } catch (error) {
       console.error('Failed to migrate guest data:', {
+        error: error,
+        errorString: String(error),
+        errorJSON: JSON.stringify(error),
         message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        error: error
+        stack: error instanceof Error ? error.stack : undefined
       });
       return {
         success: false,

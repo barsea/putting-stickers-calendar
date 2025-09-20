@@ -20,7 +20,16 @@ export class DatabaseService {
       .single();
 
     if (error) {
-      console.error('Failed to create user:', error);
+      console.error('Failed to create user:', {
+        error: error,
+        errorString: String(error),
+        errorJSON: JSON.stringify(error),
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        data: { id, name, email }
+      });
       throw error;
     }
 
@@ -113,6 +122,9 @@ export class DatabaseService {
 
     if (error) {
       console.error('Failed to upsert sticker:', {
+        error: error,
+        errorString: String(error),
+        errorJSON: JSON.stringify(error),
         message: error.message,
         details: error.details,
         hint: error.hint,
