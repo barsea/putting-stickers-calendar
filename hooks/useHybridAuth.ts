@@ -91,13 +91,15 @@ export function useHybridAuth() {
           }
         } catch (error) {
           // ユーザーが存在しない場合は作成
+          const userName = authState.user.user_metadata?.name ||
+                          authState.user.email?.split('@')[0] || 'ユーザー';
           console.log('Creating user in Supabase before migration...', {
             id: supabaseUserId,
-            name: authState.user.name,
+            name: userName,
             email: authState.user.email
           });
           try {
-            await db.createUser(supabaseUserId, authState.user.name, authState.user.email);
+            await db.createUser(supabaseUserId, userName, authState.user.email!);
             console.log('User created successfully in Supabase');
           } catch (createError) {
             console.error('Failed to create user in Supabase:', createError);
