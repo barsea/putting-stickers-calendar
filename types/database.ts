@@ -5,7 +5,7 @@ export interface Database {
     Tables: {
       users: {
         Row: {
-          id: string;
+          id: string; // カスタム認証用のVARCHAR(255)
           name: string;
           email: string;
           password_hash: string;
@@ -13,7 +13,7 @@ export interface Database {
           updated_at: string;
         };
         Insert: {
-          id: string; // カスタム認証用にrequiredに変更
+          id: string; // カスタム認証用のVARCHAR(255)
           name: string;
           email: string;
           password_hash: string;
@@ -21,7 +21,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: {
-          id?: string;
+          id?: string; // カスタム認証用のVARCHAR(255)
           name?: string;
           email?: string;
           password_hash?: string;
@@ -32,7 +32,7 @@ export interface Database {
       user_stickers: {
         Row: {
           id: string;
-          user_id: string;
+          user_id: string; // カスタム認証用のVARCHAR(255) // カスタム認証用のVARCHAR(255)
           year: number;
           month: number;
           day: number;
@@ -45,7 +45,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          user_id: string;
+          user_id: string; // カスタム認証用のVARCHAR(255)
           year: number;
           month: number;
           day: number;
@@ -73,7 +73,7 @@ export interface Database {
       user_sticker_labels: {
         Row: {
           id: string;
-          user_id: string;
+          user_id: string; // カスタム認証用のVARCHAR(255)
           red_label: string;
           blue_label: string;
           green_label: string;
@@ -83,7 +83,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          user_id: string;
+          user_id: string; // カスタム認証用のVARCHAR(255)
           red_label?: string;
           blue_label?: string;
           green_label?: string;

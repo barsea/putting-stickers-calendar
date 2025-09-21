@@ -116,6 +116,8 @@ export class DatabaseService {
         blue: stickers.blue,
         green: stickers.green,
         yellow: stickers.yellow,
+      }, {
+        onConflict: 'user_id,year,month,day' // unique制約の列を指定
       })
       .select()
       .single();
@@ -184,7 +186,9 @@ export class DatabaseService {
         blue_label: labels.blue,
         green_label: labels.green,
         yellow_label: labels.yellow,
-      } as any)
+      }, {
+        onConflict: 'user_id' // unique制約の列を指定
+      })
       .select()
       .single();
 
