@@ -43,3 +43,6 @@ next-env.d.ts
 
 # claude settings
 .claude/settings.local.json
+
+# database migration scripts
+*-migration-fix.sql
