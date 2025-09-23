@@ -23,6 +23,12 @@ export function useSupabaseStickerLabels(userId?: string) {
       return;
     }
 
+    // ゲストユーザー（数値ID）の場合はSupabaseアクセスをスキップ
+    if (userId.match(/^\d+$/)) {
+      setLabels(defaultLabels);
+      return;
+    }
+
     const loadLabels = async () => {
       setLoading(true);
       setError(null);
@@ -51,7 +57,12 @@ export function useSupabaseStickerLabels(userId?: string) {
   // 特定の色のラベルを更新
   const updateLabel = async (stickerType: StickerType, newLabel: string) => {
     if (!userId) {
-      setError('ログインが必要です');
+      // ユーザーIDがない場合は何もしない（エラーを出さない）
+      return;
+    }
+
+    // ゲストユーザー（数値ID）の場合はSupabaseアクセスをスキップ
+    if (userId.match(/^\d+$/)) {
       return;
     }
 

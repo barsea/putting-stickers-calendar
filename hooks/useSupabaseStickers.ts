@@ -21,6 +21,12 @@ export function useSupabaseStickers(userId?: string, selectedYear?: number, sele
       return;
     }
 
+    // ゲストユーザー（数値ID）の場合はSupabaseアクセスをスキップ
+    if (userId.match(/^\d+$/)) {
+      setStickerData(new Map());
+      return;
+    }
+
     const loadStickers = async () => {
       setLoading(true);
       setError(null);
@@ -48,7 +54,12 @@ export function useSupabaseStickers(userId?: string, selectedYear?: number, sele
   // 特定のステッカーをトグル（貼る・剥がす）
   const toggleSticker = async (date: number, stickerType: StickerType) => {
     if (!userId) {
-      setError('ログインが必要です');
+      // ユーザーIDがない場合は何もしない（エラーを出さない）
+      return;
+    }
+
+    // ゲストユーザー（数値ID）の場合はSupabaseアクセスをスキップ
+    if (userId.match(/^\d+$/)) {
       return;
     }
 
