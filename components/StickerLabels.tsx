@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { StickerType } from '@/hooks/useStickers';
-import { useStickerLabels } from '@/hooks/useStickerLabels';
+import { useHybridStickerLabels } from '@/hooks/useHybridStickerLabels';
 
 const stickerColors = {
   red: { bg: 'bg-red-500', text: 'text-red-600', hover: 'hover:bg-red-50' },
@@ -13,10 +13,11 @@ const stickerColors = {
 
 interface StickerLabelsProps {
   userId?: string;
+  isSupabaseAuth?: boolean;
 }
 
-export default function StickerLabels({ userId }: StickerLabelsProps) {
-  const { labels, updateLabel } = useStickerLabels(userId);
+export default function StickerLabels({ userId, isSupabaseAuth = false }: StickerLabelsProps) {
+  const { labels, updateLabel } = useHybridStickerLabels(userId, isSupabaseAuth);
   const [editingSticker, setEditingSticker] = useState<StickerType | null>(null);
   const [editValue, setEditValue] = useState('');
   const isComposingRef = useRef(false);

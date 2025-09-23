@@ -10,9 +10,10 @@ interface CalendarProps {
   year: number;
   month: number;
   onMonthChange: (year: number, month: number) => void;
+  isSupabaseAuth?: boolean;
 }
 
-export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange }: CalendarProps) {
+export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange, isSupabaseAuth = false }: CalendarProps) {
   // アニメーション状態を管理
   const [animatingStickers, setAnimatingStickers] = useState<{[key: string]: string}>({});
   
@@ -271,7 +272,7 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
       </div>
       
       {/* ステッカーラベル */}
-      <StickerLabels userId={userId} />
+      <StickerLabels userId={userId} isSupabaseAuth={isSupabaseAuth} />
     </div>
   );
 }

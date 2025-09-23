@@ -82,13 +82,14 @@ export default function Home() {
         />
 
         <div className="space-y-3 sm:space-y-6">
-          <Calendar 
+          <Calendar
             onStickerClick={toggleSticker}
             getDayStickers={getDayStickers}
             userId={userId}
             year={selectedYear}
             month={selectedMonth}
             onMonthChange={handleMonthChange}
+            isSupabaseAuth={authState.isAuthenticated}
           />
           
           <Stats 
