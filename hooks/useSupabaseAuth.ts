@@ -81,16 +81,14 @@ export function useSupabaseAuth() {
       // user_metadataからnameを取得
       const name = user.user_metadata?.name || user.email?.split('@')[0] || 'ユーザー';
 
-      const { error } = await supabase
-        .from('users')
-        .insert({
-          id: user.id,
-          name,
-          email: user.email!,
-          password_hash: '', // Supabase Authが管理するため空文字
-        });
+      // トランザクションでユーザーとラベルを同時作成
+      const { error } = await supabase.rpc('create_user_with_labels', {
+        user_id: user.id,
+        user_name: name,
+        user_email: user.email!
+      });
 
-      if (error) {
+      if (error && error.code !== '23505') { // 既存ユーザーは無視
         console.error('Failed to create user profile:', error);
       }
     } catch (error) {
