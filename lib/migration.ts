@@ -1,19 +1,6 @@
 import { db } from '@/lib/supabase/database';
 import { DayStickers, StickerLabels } from '@/types/database';
 
-interface LegacyDayStickers {
-  red: boolean;
-  blue: boolean;
-  green: boolean;
-  yellow: boolean;
-}
-
-interface LegacyStickerLabels {
-  red: string;
-  blue: string;
-  green: string;
-  yellow: string;
-}
 
 export class DataMigrationService {
   // LocalStorageからゲストデータを取得
