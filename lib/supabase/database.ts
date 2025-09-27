@@ -1,5 +1,5 @@
 import { createClient } from './client';
-import { Database, DayStickers, StickerLabels, StickerType } from '@/types/database';
+import { Database, DayStickers, StickerLabels } from '@/types/database';
 import { SupabaseClient } from '@supabase/supabase-js';
 
 export class DatabaseService {
@@ -8,7 +8,8 @@ export class DatabaseService {
 
   // ユーザー関連の操作
   async createUser(id: string, name: string, email: string) {
-    const { data, error } = await this.supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.supabase as any)
       .from('users')
       .insert({
         id, // カスタム認証システムのID（文字列）
@@ -83,10 +84,10 @@ export class DatabaseService {
     return this.convertToStickerMap(data);
   }
 
-  private convertToStickerMap(data: any[]): Map<number, DayStickers> {
+  private convertToStickerMap(data: Database['public']['Tables']['user_stickers']['Row'][]): Map<number, DayStickers> {
     // データをMapに変換
     const stickerMap = new Map<number, DayStickers>();
-    data?.forEach((sticker: any) => {
+    data?.forEach((sticker) => {
       stickerMap.set(sticker.day, {
         red: sticker.red,
         blue: sticker.blue,
@@ -105,7 +106,8 @@ export class DatabaseService {
     day: number,
     stickers: DayStickers
   ) {
-    const { data, error } = await this.supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.supabase as any)
       .from('user_stickers')
       .upsert({
         user_id: userId,
@@ -175,10 +177,10 @@ export class DatabaseService {
       if (!data) return null;
 
       return {
-        red: (data as any).red_label,
-        blue: (data as any).blue_label,
-        green: (data as any).green_label,
-        yellow: (data as any).yellow_label,
+        red: (data as Database['public']['Tables']['user_sticker_labels']['Row']).red_label,
+        blue: (data as Database['public']['Tables']['user_sticker_labels']['Row']).blue_label,
+        green: (data as Database['public']['Tables']['user_sticker_labels']['Row']).green_label,
+        yellow: (data as Database['public']['Tables']['user_sticker_labels']['Row']).yellow_label,
       };
     } catch (error) {
       console.error('Error in getLabels:', error);
@@ -188,7 +190,8 @@ export class DatabaseService {
 
   async upsertLabels(userId: string, labels: StickerLabels) {
     try {
-      const { data, error } = await this.supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (this.supabase as any)
         .from('user_sticker_labels')
         .upsert({
           user_id: userId,
@@ -223,7 +226,7 @@ export class DatabaseService {
     userId: string,
     stickerData: Map<string, Map<number, DayStickers>> // key: "YYYY-MM"
   ) {
-    const promises: Promise<any>[] = [];
+    const promises: Promise<Database['public']['Tables']['user_stickers']['Row']>[] = [];
 
     for (const [yearMonth, monthData] of stickerData.entries()) {
       const [year, month] = yearMonth.split('-').map(Number);

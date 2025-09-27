@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { User, AuthChangeEvent } from '@supabase/supabase-js';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -64,7 +64,7 @@ export function useSupabaseAuth() {
         });
 
         // サインアップ後にユーザープロファイルを作成
-        if (event === 'SIGNED_UP' && session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
           await createUserProfile(session.user);
         }
       }
@@ -82,7 +82,8 @@ export function useSupabaseAuth() {
       const name = user.user_metadata?.name || user.email?.split('@')[0] || 'ユーザー';
 
       // トランザクションでユーザーとラベルを同時作成
-      const { error } = await supabase.rpc('create_user_with_labels', {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase as any).rpc('create_user_with_labels', {
         user_id: user.id,
         user_name: name,
         user_email: user.email!
