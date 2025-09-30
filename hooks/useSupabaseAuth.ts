@@ -63,7 +63,10 @@ export function useSupabaseAuth() {
           loading: false
         });
 
-        // Supabaseトリガーで自動的にプロファイルが作成されるため、手動作成は不要
+        // サインアップ後にプロファイル作成を確認・実行
+        if (event === 'SIGNED_IN' && session?.user) {
+          await ensureUserProfile(session.user);
+        }
       }
     );
 
@@ -72,7 +75,60 @@ export function useSupabaseAuth() {
     };
   }, [supabase]);
 
-  // プロファイル作成はSupabaseトリガーで自動実行されるため、この関数は不要
+  // ユーザープロファイルの確認・作成
+  const ensureUserProfile = async (user: User) => {
+    try {
+      console.log('Ensuring user profile for:', user.id);
+
+      // まずプロファイルが存在するか確認
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: existingProfile } = await (supabase as any)
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (existingProfile) {
+        console.log('Profile already exists');
+        return;
+      }
+
+      // プロファイルが存在しない場合は作成
+      const name = user.user_metadata?.name || user.email?.split('@')[0] || 'ユーザー';
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: profileError } = await (supabase as any)
+        .from('profiles')
+        .insert({
+          id: user.id,
+          name: name,
+          email: user.email!
+        });
+
+      if (profileError) {
+        console.error('Failed to create profile:', profileError);
+        throw profileError;
+      }
+
+      // デフォルトラベルも作成
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: labelError } = await (supabase as any)
+        .from('user_sticker_labels')
+        .insert({
+          user_id: user.id
+        });
+
+      if (labelError) {
+        console.error('Failed to create default labels:', labelError);
+        // ラベル作成失敗は非致命的なのでログだけ出力
+      }
+
+      console.log('Profile and labels created successfully');
+    } catch (error) {
+      console.error('Failed to ensure user profile:', error);
+      // エラーは無視（ユーザー体験を阻害しないため）
+    }
+  };
 
   // サインアップ
   const signUp = async (signUpData: SignUpData): Promise<{ success: boolean; error?: string }> => {
@@ -93,7 +149,7 @@ export function useSupabaseAuth() {
           success: false,
           error: error.message === 'User already registered'
             ? 'このメールアドレスは既に登録されています'
-            : error.message
+            : `登録エラー: ${error.message}`
         };
       }
 
