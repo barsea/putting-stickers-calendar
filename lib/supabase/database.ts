@@ -1,14 +1,14 @@
 import { createClient } from './client';
 import { Database, DayStickers, StickerLabels } from '@/types/database';
-import { SupabaseClient } from '@supabase/supabase-js';
 
 export class DatabaseService {
-  private supabase: SupabaseClient<Database> = createClient();
+  private supabase = createClient();
 
 
   // プロファイル関連の操作
   async createProfile(id: string, name: string, email: string) {
-    const { data, error } = await this.supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.supabase as any)
       .from('profiles')
       .insert({
         id, // Supabase AuthのUUID
@@ -36,7 +36,8 @@ export class DatabaseService {
   }
 
   async getProfileById(id: string) {
-    const { data, error } = await this.supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.supabase as any)
       .from('profiles')
       .select('*')
       .eq('id', id)
@@ -51,7 +52,8 @@ export class DatabaseService {
   }
 
   async getProfileByEmail(email: string) {
-    const { data, error } = await this.supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (this.supabase as any)
       .from('profiles')
       .select('*')
       .eq('email', email)
