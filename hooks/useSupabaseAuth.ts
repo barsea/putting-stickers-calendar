@@ -31,10 +31,21 @@ export function useSupabaseAuth() {
   const supabase = createClient();
 
   useEffect(() => {
+    // Supabase接続の確認
+    console.log('Supabase client initialized:', {
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing',
+      key: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY ? 'Set' : 'Missing'
+    });
+
     // 初期認証状態の取得
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        console.log('Initial session:', {
+          hasSession: !!session,
+          userId: session?.user?.id,
+          email: session?.user?.email
+        });
         setAuthState({
           isAuthenticated: !!session,
           user: session?.user ?? null,
@@ -133,7 +144,13 @@ export function useSupabaseAuth() {
   // サインアップ
   const signUp = async (signUpData: SignUpData): Promise<{ success: boolean; error?: string }> => {
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log('Starting sign up process...', {
+        email: signUpData.email,
+        name: signUpData.name,
+        hasPassword: !!signUpData.password
+      });
+
+      const { data, error } = await supabase.auth.signUp({
         email: signUpData.email,
         password: signUpData.password,
         options: {
@@ -143,8 +160,20 @@ export function useSupabaseAuth() {
         }
       });
 
+      console.log('Sign up response:', {
+        data: data,
+        error: error,
+        user: data?.user,
+        session: data?.session
+      });
+
       if (error) {
-        console.error('Sign up failed:', error);
+        console.error('Sign up failed with error:', {
+          error: error,
+          message: error.message,
+          code: error.status,
+          details: error
+        });
         return {
           success: false,
           error: error.message === 'User already registered'
@@ -153,10 +182,24 @@ export function useSupabaseAuth() {
         };
       }
 
+      if (!data?.user) {
+        console.error('Sign up succeeded but no user returned:', data);
+        return {
+          success: false,
+          error: 'ユーザー作成に失敗しました（ユーザー情報なし）'
+        };
+      }
+
+      console.log('Sign up successful:', {
+        userId: data.user.id,
+        email: data.user.email,
+        confirmed: data.user.email_confirmed_at
+      });
+
       return { success: true };
     } catch (error) {
-      console.error('Sign up failed:', error);
-      return { success: false, error: '登録に失敗しました' };
+      console.error('Sign up failed with exception:', error);
+      return { success: false, error: '登録に失敗しました（システムエラー）' };
     }
   };
 
