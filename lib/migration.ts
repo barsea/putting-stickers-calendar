@@ -122,16 +122,8 @@ export class DataMigrationService {
 
       let migratedStickers = 0;
 
-      // ユーザーがSupabaseに存在することを確認
-      try {
-        const user = await db.getUserById(supabaseUserId);
-        if (!user) {
-          throw new Error(`User ${supabaseUserId} not found in Supabase`);
-        }
-      } catch (error) {
-        console.error('User verification failed:', error);
-        throw new Error(`Failed to verify user existence: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
+      // Supabaseトリガーによってプロファイルが自動作成されるため、確認は不要
+      console.log('Starting migration for user:', supabaseUserId);
 
       // ステッカーデータの移行
       for (const [yearMonth, monthData] of stickerData.entries()) {

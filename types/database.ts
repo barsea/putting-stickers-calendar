@@ -3,28 +3,25 @@
 export interface Database {
   public: {
     Tables: {
-      users: {
+      profiles: {
         Row: {
-          id: string; // カスタム認証用のVARCHAR(255)
+          id: string; // UUID - Supabase Authのuser.idと同じ
           name: string;
           email: string;
-          password_hash: string;
           created_at: string;
           updated_at: string;
         };
         Insert: {
-          id: string; // カスタム認証用のVARCHAR(255)
+          id: string; // UUID - Supabase Authのuser.idと同じ
           name: string;
           email: string;
-          password_hash: string;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
-          id?: string; // カスタム認証用のVARCHAR(255)
+          id?: string;
           name?: string;
           email?: string;
-          password_hash?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -32,7 +29,7 @@ export interface Database {
       user_stickers: {
         Row: {
           id: string;
-          user_id: string; // カスタム認証用のVARCHAR(255) // カスタム認証用のVARCHAR(255)
+          user_id: string; // UUID - Supabase Authのuser.idと同じ
           year: number;
           month: number;
           day: number;
@@ -45,7 +42,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          user_id: string; // カスタム認証用のVARCHAR(255)
+          user_id: string; // UUID - Supabase Authのuser.idと同じ
           year: number;
           month: number;
           day: number;
@@ -73,7 +70,7 @@ export interface Database {
       user_sticker_labels: {
         Row: {
           id: string;
-          user_id: string; // カスタム認証用のVARCHAR(255)
+          user_id: string; // UUID - Supabase Authのuser.idと同じ
           red_label: string;
           blue_label: string;
           green_label: string;
@@ -83,7 +80,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          user_id: string; // カスタム認証用のVARCHAR(255)
+          user_id: string; // UUID - Supabase Authのuser.idと同じ
           red_label?: string;
           blue_label?: string;
           green_label?: string;

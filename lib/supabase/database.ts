@@ -6,22 +6,20 @@ export class DatabaseService {
   private supabase: SupabaseClient<Database> = createClient();
 
 
-  // ユーザー関連の操作
-  async createUser(id: string, name: string, email: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (this.supabase as any)
-      .from('users')
+  // プロファイル関連の操作
+  async createProfile(id: string, name: string, email: string) {
+    const { data, error } = await this.supabase
+      .from('profiles')
       .insert({
-        id, // カスタム認証システムのID（文字列）
+        id, // Supabase AuthのUUID
         name,
         email,
-        password_hash: '', // カスタム認証用の空文字
       })
       .select()
       .single();
 
     if (error) {
-      console.error('Failed to create user:', {
+      console.error('Failed to create profile:', {
         error: error,
         errorString: String(error),
         errorJSON: JSON.stringify(error),
@@ -37,30 +35,30 @@ export class DatabaseService {
     return data;
   }
 
-  async getUserById(id: string) {
+  async getProfileById(id: string) {
     const { data, error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('id', id)
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error('Failed to get user:', error);
+      console.error('Failed to get profile:', error);
       throw error;
     }
 
     return data;
   }
 
-  async getUserByEmail(email: string) {
+  async getProfileByEmail(email: string) {
     const { data, error } = await this.supabase
-      .from('users')
+      .from('profiles')
       .select('*')
       .eq('email', email)
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error('Failed to get user:', error);
+      console.error('Failed to get profile:', error);
       throw error;
     }
 

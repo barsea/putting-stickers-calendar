@@ -63,10 +63,7 @@ export function useSupabaseAuth() {
           loading: false
         });
 
-        // サインアップ後にユーザープロファイルを作成
-        if (event === 'SIGNED_IN' && session?.user) {
-          await createUserProfile(session.user);
-        }
+        // Supabaseトリガーで自動的にプロファイルが作成されるため、手動作成は不要
       }
     );
 
@@ -75,27 +72,7 @@ export function useSupabaseAuth() {
     };
   }, [supabase]);
 
-  // ユーザープロファイルの作成
-  const createUserProfile = async (user: User) => {
-    try {
-      // user_metadataからnameを取得
-      const name = user.user_metadata?.name || user.email?.split('@')[0] || 'ユーザー';
-
-      // トランザクションでユーザーとラベルを同時作成
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase as any).rpc('create_user_with_labels', {
-        user_id: user.id,
-        user_name: name,
-        user_email: user.email!
-      });
-
-      if (error && error.code !== '23505') { // 既存ユーザーは無視
-        console.error('Failed to create user profile:', error);
-      }
-    } catch (error) {
-      console.error('Failed to create user profile:', error);
-    }
-  };
+  // プロファイル作成はSupabaseトリガーで自動実行されるため、この関数は不要
 
   // サインアップ
   const signUp = async (signUpData: SignUpData): Promise<{ success: boolean; error?: string }> => {

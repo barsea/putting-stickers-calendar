@@ -81,31 +81,8 @@ export function useHybridAuth() {
       console.log('Supabase user ID:', supabaseUserId);
 
       if (authState.isAuthenticated && authState.user) {
-        try {
-          // ユーザーが存在するか確認
-          const existingUser = await db.getUserById(supabaseUserId);
-          if (existingUser) {
-            console.log('User already exists in Supabase');
-          } else {
-            throw new Error('User not found');
-          }
-        } catch (error) {
-          // ユーザーが存在しない場合は作成
-          const userName = authState.user.user_metadata?.name ||
-                          authState.user.email?.split('@')[0] || 'ユーザー';
-          console.log('Creating user in Supabase before migration...', {
-            id: supabaseUserId,
-            name: userName,
-            email: authState.user.email
-          });
-          try {
-            await db.createUser(supabaseUserId, userName, authState.user.email!);
-            console.log('User created successfully in Supabase');
-          } catch (createError) {
-            console.error('Failed to create user in Supabase:', createError);
-            throw createError;
-          }
-        }
+        // Supabaseトリガーによって自動的にプロファイルが作成されるため、確認のみ行う
+        console.log('User authenticated, proceeding with migration for:', supabaseUserId);
       } else {
         console.error('No authenticated user found for migration');
         throw new Error('User not authenticated - cannot proceed with migration');
