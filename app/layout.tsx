@@ -9,7 +9,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Stickers",
+  title: "Stickers - 習慣カレンダー",
   description: "習慣化をサポートする、シンプルなカレンダーアプリ",
 };
 
