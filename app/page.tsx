@@ -8,6 +8,7 @@ import SignUpForm from '@/components/SignUpForm';
 import LoginForm from '@/components/LoginForm';
 import { useHybridStickers } from '@/hooks/useHybridStickers';
 import { useHybridAuth } from '@/hooks/useHybridAuth';
+import { useHybridStickerLabels } from '@/hooks/useHybridStickerLabels';
 import { SignUpData } from '@/types/auth';
 
 type ViewMode = 'calendar' | 'signup' | 'login';
@@ -23,6 +24,7 @@ export default function Home() {
 
   const userId = authState.user?.id;
   const { getDayStickers, toggleSticker, getStats } = useHybridStickers(userId, selectedYear, selectedMonth);
+  const { labels } = useHybridStickerLabels(userId, authState.isAuthenticated);
   const stats = getStats();
 
   // 月変更ハンドラー
@@ -90,6 +92,7 @@ export default function Home() {
             month={selectedMonth}
             onMonthChange={handleMonthChange}
             isSupabaseAuth={authState.isAuthenticated}
+            stickerLabels={labels}
           />
           
           <Stats 

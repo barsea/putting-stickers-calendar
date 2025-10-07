@@ -11,9 +11,10 @@ interface CalendarProps {
   month: number;
   onMonthChange: (year: number, month: number) => void;
   isSupabaseAuth?: boolean;
+  stickerLabels?: { red: string; blue: string; green: string; yellow: string };
 }
 
-export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange, isSupabaseAuth = false }: CalendarProps) {
+export default function Calendar({ onStickerClick, getDayStickers, userId, year, month, onMonthChange, isSupabaseAuth = false, stickerLabels }: CalendarProps) {
   // アニメーション状態を管理
   const [animatingStickers, setAnimatingStickers] = useState<{[key: string]: string}>({});
   
@@ -143,11 +144,12 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
       {/* 月移動コントロール */}
       <div className="bg-gray-50 border-b px-4 py-3">
         <div className="flex items-center justify-between">
-          <button 
+          <button
             onClick={goToPrevMonth}
             className="flex items-center px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            aria-label="前月に移動"
           >
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             前月
@@ -158,18 +160,20 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
               <button
                 onClick={goToCurrentMonth}
                 className="px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                aria-label="今月に戻る"
               >
                 今月へ
               </button>
             )}
           </div>
           
-          <button 
+          <button
             onClick={goToNextMonth}
             className="flex items-center px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+            aria-label="次月に移動"
           >
             次月
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -234,23 +238,29 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                       const animationKey = `${date}-${color}`;
                       const animationClass = animatingStickers[animationKey] || '';
                       const colorConfig = {
-                        red: { bg: 'bg-red-500', hover: 'hover:bg-red-100', border: 'border-red-300', bgColor: 'rgba(239, 68, 68, 0.05)' },
-                        blue: { bg: 'bg-blue-500', hover: 'hover:bg-blue-100', border: 'border-blue-300', bgColor: 'rgba(59, 130, 246, 0.05)' },
-                        green: { bg: 'bg-green-500', hover: 'hover:bg-green-100', border: 'border-green-300', bgColor: 'rgba(34, 197, 94, 0.05)' },
-                        yellow: { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-100', border: 'border-yellow-300', bgColor: 'rgba(234, 179, 8, 0.05)' }
+                        red: { bg: 'bg-red-500', hover: 'hover:bg-red-100', border: 'border-red-300', bgColor: 'rgba(239, 68, 68, 0.05)', name: '赤' },
+                        blue: { bg: 'bg-blue-500', hover: 'hover:bg-blue-100', border: 'border-blue-300', bgColor: 'rgba(59, 130, 246, 0.05)', name: '青' },
+                        green: { bg: 'bg-green-500', hover: 'hover:bg-green-100', border: 'border-green-300', bgColor: 'rgba(34, 197, 94, 0.05)', name: '緑' },
+                        yellow: { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-100', border: 'border-yellow-300', bgColor: 'rgba(234, 179, 8, 0.05)', name: '黄' }
                       };
-                      
+
+                      // ラベルまたはデフォルトの色名を使用
+                      const labelName = stickerLabels?.[color] || colorConfig[color].name;
+                      const ariaLabel = `${month}月${date}日 ${labelName}のステッカー ${isPlaced ? '貼られています' : '貼られていません'}`;
+
                       return (
                         <button
                           key={color}
                           onClick={() => handleStickerClick(date, color)}
                           className={`w-full h-full flex items-center justify-center ${colorConfig[color].hover} rounded transition-colors sticker-container`}
                           style={{ backgroundColor: isPlaced ? undefined : colorConfig[color].bgColor }}
+                          aria-label={ariaLabel}
+                          aria-pressed={isPlaced}
                         >
                           {isPlaced ? (
                             <div className={`sticker sticker-placed w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${colorConfig[color].bg} rounded-full ${animationClass}`}></div>
                           ) : (
-                            <div className={`sticker sticker-empty w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border border-dashed ${colorConfig[color].border} rounded-full opacity-60 ${animationClass}`}></div>
+                            <div className={`sticker sticker-empty w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border border-dashed ${colorConfig[color].border} rounded-full opacity-70 ${animationClass}`}></div>
                           )}
                         </button>
                       );
