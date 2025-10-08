@@ -196,6 +196,23 @@ export function useSupabaseAuth() {
         confirmed: data.user.email_confirmed_at
       });
 
+      // プロファイルを明示的に作成
+      if (data.session) {
+        console.log('Creating user profile via RPC...');
+        try {
+          const { error: rpcError } = await supabase.rpc('create_user_profile');
+          if (rpcError) {
+            console.error('Failed to create profile via RPC:', rpcError);
+            // プロファイル作成失敗は非致命的（後で再試行される）
+          } else {
+            console.log('✓ Profile created successfully via RPC');
+          }
+        } catch (rpcException) {
+          console.error('RPC call exception:', rpcException);
+          // プロファイル作成失敗は非致命的
+        }
+      }
+
       return { success: true };
     } catch (error) {
       console.error('Sign up failed with exception:', error);
@@ -219,6 +236,21 @@ export function useSupabaseAuth() {
             ? 'メールアドレスまたはパスワードが正しくありません'
             : error.message
         };
+      }
+
+      // ログイン成功後、プロファイルが存在しない場合は作成
+      console.log('Login successful, ensuring profile exists...');
+      try {
+        const { error: rpcError } = await supabase.rpc('create_user_profile');
+        if (rpcError) {
+          console.error('Failed to ensure profile via RPC:', rpcError);
+          // プロファイル作成失敗は非致命的
+        } else {
+          console.log('✓ Profile ensured via RPC');
+        }
+      } catch (rpcException) {
+        console.error('RPC call exception:', rpcException);
+        // プロファイル作成失敗は非致命的
       }
 
       return { success: true };
