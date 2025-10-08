@@ -122,25 +122,41 @@ export class DataMigrationService {
 
       let migratedStickers = 0;
 
-      // Supabaseトリガーによってプロファイルが自動作成されるため、確認は不要
       console.log('Starting migration for user:', supabaseUserId);
+      console.log('Guest sticker data found:', stickerData.size, 'months');
+      console.log('Guest labels found:', labels ? 'Yes' : 'No');
 
       // ステッカーデータの移行
       for (const [yearMonth, monthData] of stickerData.entries()) {
         const [year, month] = yearMonth.split('-').map(Number);
+        console.log(`Migrating month ${yearMonth}: ${monthData.size} days`);
 
         for (const [day, stickers] of monthData.entries()) {
           if (Object.values(stickers).some(Boolean)) {
-            await db.upsertSticker(supabaseUserId, year, month, day, stickers);
-            migratedStickers++;
+            try {
+              await db.upsertSticker(supabaseUserId, year, month, day, stickers);
+              migratedStickers++;
+              console.log(`  ✓ Migrated sticker for ${year}-${month}-${day}`);
+            } catch (stickerError) {
+              console.error(`  ✗ Failed to migrate sticker for ${year}-${month}-${day}:`, stickerError);
+              // 個別のステッカー移行失敗は続行
+            }
           }
         }
       }
 
       // ラベルデータの移行
       if (labels) {
-        await db.upsertLabels(supabaseUserId, labels);
+        try {
+          await db.upsertLabels(supabaseUserId, labels);
+          console.log('✓ Labels migrated successfully');
+        } catch (labelError) {
+          console.error('✗ Failed to migrate labels:', labelError);
+          // ラベル移行失敗は非致命的
+        }
       }
+
+      console.log(`Migration completed: ${migratedStickers} stickers migrated`);
 
       return {
         success: true,
