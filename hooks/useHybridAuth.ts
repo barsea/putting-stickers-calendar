@@ -85,34 +85,54 @@ export function useHybridAuth() {
         console.log('User authenticated, proceeding with migration for:', supabaseUserId);
       } else {
         console.error('No authenticated user found for migration');
-        throw new Error('User not authenticated - cannot proceed with migration');
+        // 認証されていない場合は移行をスキップ（エラーにしない）
+        setMigrationStatus({
+          inProgress: false,
+          completed: true,
+          error: null
+        });
+        return { success: true, migratedStickers: 0 };
       }
 
-      // ゲストデータの移行
-      const guestMigration = await migrationService.migrateGuestData(supabaseUserId);
+      // タイムアウト付きで移行処理を実行（10秒）
+      const migrationPromise = migrationService.migrateGuestData(supabaseUserId);
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Migration timeout')), 10000)
+      );
+
+      const guestMigration = await Promise.race([migrationPromise, timeoutPromise])
+        .catch((error) => {
+          console.error('Migration failed or timed out:', error);
+          // 移行失敗でもログイン自体は成功させる
+          return { success: false, migratedStickers: 0, error: String(error) };
+        });
 
       let totalMigratedStickers = guestMigration.migratedStickers;
 
       if (guestMigration.success && guestMigration.migratedStickers > 0) {
         migrationService.cleanupLocalStorage();
         console.log(`Migrated ${guestMigration.migratedStickers} guest stickers`);
+      } else if (!guestMigration.success) {
+        console.warn('Migration failed, but user can still use the app:', guestMigration.error);
       }
 
+      // 移行の成否に関わらず、completed状態にする（ログインは成功）
       setMigrationStatus({
         inProgress: false,
         completed: true,
-        error: null
+        error: guestMigration.success ? null : (guestMigration.error || 'データ移行に失敗しました（アプリは利用可能です）')
       });
 
       return { success: true, migratedStickers: totalMigratedStickers };
     } catch (error) {
-      console.error('Migration failed:', error);
+      console.error('Migration failed with exception:', error);
+      // エラーが発生してもログイン自体は成功させる
       setMigrationStatus({
         inProgress: false,
-        completed: false,
-        error: 'データ移行に失敗しました'
+        completed: true,
+        error: 'データ移行に失敗しました（アプリは利用可能です）'
       });
-      return { success: false, migratedStickers: 0 };
+      return { success: true, migratedStickers: 0 };
     }
   };
 
