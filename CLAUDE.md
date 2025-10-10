@@ -263,8 +263,39 @@ supabase/migrations/20250101000000_add_rls_security.sql # RLSセキュリティ�
 - 新規ユーザー自動プロファイル作成機能
 - セキュリティマイグレーション適用完了
 
+### 品質測定結果（2025-10-10）
+
+**Lighthouse Score（本番環境）**
+- Performance: **90/100** ✅ 目標達成
+- Accessibility: **96/100** ⚠️ 改善の余地あり
+- Best Practices: **100/100** ✅ 完璧
+- SEO: **91/100** ✅ 優秀
+
+**主要パフォーマンスメトリクス**
+- First Contentful Paint (FCP): 1,170ms
+- Largest Contentful Paint (LCP): 2,122ms
+- Total Blocking Time (TBT): 230ms
+- Cumulative Layout Shift (CLS): 0（完璧）
+- Speed Index: 5,871ms
+
+**アクセシビリティ改善TODO（後日対応予定）**
+
+1. **コントラスト比の修正（6箇所）** - WCAG基準4.5:1を満たす
+   - ステッカーカウント表示: `opacity-30` → `opacity-50`または`opacity-60`に変更（app/page.tsx）
+   - ラベル編集ボタン（緑）: `text-green-600` → `text-green-700`または`text-green-800`（app/page.tsx）
+   - ラベル編集ボタン（黄）: `text-yellow-600` → `text-yellow-700`または`text-yellow-800`（app/page.tsx）
+   - 達成率表示（緑）: `text-green-600` on `green-50` → `text-green-700`または`text-green-800`（app/page.tsx）
+
+2. **手動確認が必要な項目**
+   - アクセスキーの一意性確認
+   - ボタン・リンクのアクセシブルな名前の検証
+   - ARIAダイアログの名前の検証
+   - ARIA入力フィールドの名前の検証
+
+**測定ファイル**: `lighthouse-production.json`, `lighthouse-local.json`（.gitignoreに追加済み）
+
 ---
 
-**更新日**: 2025-10-06
-**バージョン**: 4.1（TypeScript品質保証版）
-**次回更新**: 新機能追加時
+**更新日**: 2025-10-10
+**バージョン**: 4.2（品質測定・アクセシビリティ改善計画追加版）
+**次回更新**: アクセシビリティ改善実施時または新機能追加時
