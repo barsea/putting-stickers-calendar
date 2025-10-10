@@ -46,3 +46,6 @@ next-env.d.ts
 
 # database migration scripts
 # *-migration-fix.sql
+
+# lighthouse reports
+lighthouse-*.json
