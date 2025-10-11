@@ -7,8 +7,8 @@ import { useHybridStickerLabels } from '@/hooks/useHybridStickerLabels';
 const stickerColors = {
   red: { bg: 'bg-red-500', text: 'text-red-600', hover: 'hover:bg-red-50' },
   blue: { bg: 'bg-blue-500', text: 'text-blue-600', hover: 'hover:bg-blue-50' },
-  green: { bg: 'bg-green-500', text: 'text-green-600', hover: 'hover:bg-green-50' },
-  yellow: { bg: 'bg-yellow-500', text: 'text-yellow-600', hover: 'hover:bg-yellow-50' }
+  green: { bg: 'bg-green-500', text: 'text-green-700', hover: 'hover:bg-green-50' },
+  yellow: { bg: 'bg-yellow-500', text: 'text-yellow-700', hover: 'hover:bg-yellow-50' }
 } as const;
 
 interface StickerLabelsProps {

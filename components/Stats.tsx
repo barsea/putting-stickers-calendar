@@ -44,7 +44,7 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
 
         <div className="bg-green-50 rounded-lg p-2 sm:p-3" role="listitem">
-          <div className="text-lg sm:text-xl font-bold text-green-600" aria-label={`達成率 ${percentage}パーセント`}>
+          <div className="text-lg sm:text-xl font-bold text-green-700" aria-label={`達成率 ${percentage}パーセント`}>
             {percentage}%
           </div>
           <div className="text-xs text-gray-600">

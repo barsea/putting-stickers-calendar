@@ -269,9 +269,12 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
                 </div>
               ) : (
                 <div className="w-full h-full p-1 sm:p-2 flex flex-col">
-                  <span className={`text-sm sm:text-base md:text-lg font-medium self-start opacity-30
-                    ${dayOfWeek === 0 ? 'text-red-400' : dayOfWeek === 6 ? 'text-blue-400' : 'text-gray-400'}
-                  `}>
+                  <span
+                    className={`text-sm sm:text-base md:text-lg font-medium self-start
+                      ${dayOfWeek === 0 ? 'text-red-500/40' : dayOfWeek === 6 ? 'text-blue-500/40' : 'text-gray-500/40'}
+                    `}
+                    aria-hidden="true"
+                  >
                     {date}
                   </span>
                 </div>
