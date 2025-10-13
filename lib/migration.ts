@@ -122,23 +122,17 @@ export class DataMigrationService {
 
       let migratedStickers = 0;
 
-      console.log('Starting migration for user:', supabaseUserId);
-      console.log('Guest sticker data found:', stickerData.size, 'months');
-      console.log('Guest labels found:', labels ? 'Yes' : 'No');
-
       // ステッカーデータの移行
       for (const [yearMonth, monthData] of stickerData.entries()) {
         const [year, month] = yearMonth.split('-').map(Number);
-        console.log(`Migrating month ${yearMonth}: ${monthData.size} days`);
 
         for (const [day, stickers] of monthData.entries()) {
           if (Object.values(stickers).some(Boolean)) {
             try {
               await db.upsertSticker(supabaseUserId, year, month, day, stickers);
               migratedStickers++;
-              console.log(`  ✓ Migrated sticker for ${year}-${month}-${day}`);
             } catch (stickerError) {
-              console.error(`  ✗ Failed to migrate sticker for ${year}-${month}-${day}:`, stickerError);
+              console.error(`Failed to migrate sticker for ${year}-${month}-${day}:`, stickerError);
               // 個別のステッカー移行失敗は続行
             }
           }
@@ -149,27 +143,18 @@ export class DataMigrationService {
       if (labels) {
         try {
           await db.upsertLabels(supabaseUserId, labels);
-          console.log('✓ Labels migrated successfully');
         } catch (labelError) {
-          console.error('✗ Failed to migrate labels:', labelError);
+          console.error('Failed to migrate labels:', labelError);
           // ラベル移行失敗は非致命的
         }
       }
-
-      console.log(`Migration completed: ${migratedStickers} stickers migrated`);
 
       return {
         success: true,
         migratedStickers
       };
     } catch (error) {
-      console.error('Failed to migrate guest data:', {
-        error: error,
-        errorString: String(error),
-        errorJSON: JSON.stringify(error),
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
-      });
+      console.error('Failed to migrate guest data:', error);
       return {
         success: false,
         migratedStickers: 0,
@@ -249,8 +234,6 @@ export class DataMigrationService {
       }
 
       keysToRemove.forEach(key => localStorage.removeItem(key));
-
-      console.log(`Cleaned up ${keysToRemove.length} localStorage keys`);
     } catch (error) {
       console.error('Failed to cleanup localStorage:', error);
     }

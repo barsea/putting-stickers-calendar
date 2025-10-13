@@ -31,21 +31,10 @@ export function useSupabaseAuth() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Supabase接続の確認
-    console.log('Supabase client initialized:', {
-      url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing',
-      key: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY ? 'Set' : 'Missing'
-    });
-
     // 初期認証状態の取得
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('Initial session:', {
-          hasSession: !!session,
-          userId: session?.user?.id,
-          email: session?.user?.email
-        });
         setAuthState({
           isAuthenticated: !!session,
           user: session?.user ?? null,
@@ -66,8 +55,6 @@ export function useSupabaseAuth() {
     // 認証状態の変更を監視
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-
         setAuthState({
           isAuthenticated: !!session,
           user: session?.user ?? null,
@@ -89,8 +76,6 @@ export function useSupabaseAuth() {
   // ユーザープロファイルの確認・作成
   const ensureUserProfile = async (user: User) => {
     try {
-      console.log('Ensuring user profile for:', user.id);
-
       // まずプロファイルが存在するか確認
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: existingProfile } = await (supabase as any)
@@ -100,7 +85,6 @@ export function useSupabaseAuth() {
         .single();
 
       if (existingProfile) {
-        console.log('Profile already exists');
         return;
       }
 
@@ -133,8 +117,6 @@ export function useSupabaseAuth() {
         console.error('Failed to create default labels:', labelError);
         // ラベル作成失敗は非致命的なのでログだけ出力
       }
-
-      console.log('Profile and labels created successfully');
     } catch (error) {
       console.error('Failed to ensure user profile:', error);
       // エラーは無視（ユーザー体験を阻害しないため）
@@ -144,12 +126,6 @@ export function useSupabaseAuth() {
   // サインアップ
   const signUp = async (signUpData: SignUpData): Promise<{ success: boolean; error?: string }> => {
     try {
-      console.log('Starting sign up process...', {
-        email: signUpData.email,
-        name: signUpData.name,
-        hasPassword: !!signUpData.password
-      });
-
       const { data, error } = await supabase.auth.signUp({
         email: signUpData.email,
         password: signUpData.password,
@@ -160,20 +136,8 @@ export function useSupabaseAuth() {
         }
       });
 
-      console.log('Sign up response:', {
-        data: data,
-        error: error,
-        user: data?.user,
-        session: data?.session
-      });
-
       if (error) {
-        console.error('Sign up failed with error:', {
-          error: error,
-          message: error.message,
-          code: error.status,
-          details: error
-        });
+        console.error('Sign up failed:', error);
         return {
           success: false,
           error: error.message === 'User already registered'
@@ -183,29 +147,20 @@ export function useSupabaseAuth() {
       }
 
       if (!data?.user) {
-        console.error('Sign up succeeded but no user returned:', data);
+        console.error('Sign up succeeded but no user returned');
         return {
           success: false,
           error: 'ユーザー作成に失敗しました（ユーザー情報なし）'
         };
       }
 
-      console.log('Sign up successful:', {
-        userId: data.user.id,
-        email: data.user.email,
-        confirmed: data.user.email_confirmed_at
-      });
-
       // プロファイルを明示的に作成
       if (data.session) {
-        console.log('Creating user profile via RPC...');
         try {
           const { error: rpcError } = await supabase.rpc('create_user_profile');
           if (rpcError) {
             console.error('Failed to create profile via RPC:', rpcError);
             // プロファイル作成失敗は非致命的（後で再試行される）
-          } else {
-            console.log('✓ Profile created successfully via RPC');
           }
         } catch (rpcException) {
           console.error('RPC call exception:', rpcException);
@@ -239,14 +194,11 @@ export function useSupabaseAuth() {
       }
 
       // ログイン成功後、プロファイルが存在しない場合は作成
-      console.log('Login successful, ensuring profile exists...');
       try {
         const { error: rpcError } = await supabase.rpc('create_user_profile');
         if (rpcError) {
           console.error('Failed to ensure profile via RPC:', rpcError);
           // プロファイル作成失敗は非致命的
-        } else {
-          console.log('✓ Profile ensured via RPC');
         }
       } catch (rpcException) {
         console.error('RPC call exception:', rpcException);

@@ -19,16 +19,7 @@ export class DatabaseService {
       .single();
 
     if (error) {
-      console.error('Failed to create profile:', {
-        error: error,
-        errorString: String(error),
-        errorJSON: JSON.stringify(error),
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        data: { id, name, email }
-      });
+      console.error('Failed to create profile:', error);
       throw error;
     }
 
@@ -125,16 +116,7 @@ export class DatabaseService {
       .single();
 
     if (error) {
-      console.error('Failed to upsert sticker:', {
-        error: error,
-        errorString: String(error),
-        errorJSON: JSON.stringify(error),
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        data: { userId, year, month, day, stickers }
-      });
+      console.error('Failed to upsert sticker:', error);
       throw error;
     }
 

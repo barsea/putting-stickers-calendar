@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSupabaseAuth } from './useSupabaseAuth';
 import { useAuth as useLocalAuth } from './useAuth';
 import { migrationService } from '@/lib/migration';
-import { db } from '@/lib/supabase/database';
 
 export interface HybridAuthState {
   isAuthenticated: boolean;
@@ -77,12 +76,9 @@ export function useHybridAuth() {
     try {
       // まずSupabaseにユーザーが存在することを確認・作成
       const authState = supabaseAuth.authState;
-      console.log('Auth state for migration:', authState);
-      console.log('Supabase user ID:', supabaseUserId);
 
       if (authState.isAuthenticated && authState.user) {
         // Supabaseトリガーによって自動的にプロファイルが作成されるため、確認のみ行う
-        console.log('User authenticated, proceeding with migration for:', supabaseUserId);
       } else {
         console.error('No authenticated user found for migration');
         // 認証されていない場合は移行をスキップ（エラーにしない）
@@ -107,13 +103,8 @@ export function useHybridAuth() {
           return { success: false, migratedStickers: 0, error: String(error) };
         });
 
-      let totalMigratedStickers = guestMigration.migratedStickers;
-
       if (guestMigration.success && guestMigration.migratedStickers > 0) {
         migrationService.cleanupLocalStorage();
-        console.log(`Migrated ${guestMigration.migratedStickers} guest stickers`);
-      } else if (!guestMigration.success) {
-        console.warn('Migration failed, but user can still use the app:', guestMigration.error);
       }
 
       // 移行の成否に関わらず、completed状態にする（ログインは成功）
@@ -123,7 +114,7 @@ export function useHybridAuth() {
         error: guestMigration.success ? null : (guestMigration.error || 'データ移行に失敗しました（アプリは利用可能です）')
       });
 
-      return { success: true, migratedStickers: totalMigratedStickers };
+      return { success: true, migratedStickers: guestMigration.migratedStickers };
     } catch (error) {
       console.error('Migration failed with exception:', error);
       // エラーが発生してもログイン自体は成功させる
