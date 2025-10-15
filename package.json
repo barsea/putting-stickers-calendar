@@ -1,5 +1,23 @@
 {
+  "name": "putting-stickers-calendar",
+  "version": "5.1.0",
+  "description": "アナログで効果があった「カレンダーにステッカーを貼って習慣化する」方法をデジタル化したWebアプリケーション",
   "private": true,
+  "author": "Shibata Takahiro",
+  "license": "UNLICENSED",
+  "keywords": [
+    "habit-tracker",
+    "calendar",
+    "sticker",
+    "next.js",
+    "typescript",
+    "supabase",
+    "habit-formation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shibatakahiro/putting-stickers-calendar.git"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
