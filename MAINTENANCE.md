@@ -76,7 +76,6 @@ npx tsc --noEmit
 #### 1. 環境変数のセキュリティ強化
 - [x] `.env.local`がGit管理外であることを確認（`.gitignore`で除外済み）
 - [x] `.env.example`でテンプレート提供済み
-- [ ] `.env.local.example`の作成（推奨）
 - [ ] Vercel環境変数の定期的な見直し
 
 #### 2. セキュリティ脆弱性の監視
