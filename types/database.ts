@@ -67,34 +67,34 @@ export interface Database {
           updated_at?: string;
         };
       };
-      user_sticker_labels: {
+      sticker_labels: {
         Row: {
           id: string;
           user_id: string; // UUID - Supabase Authのuser.idと同じ
-          red_label: string;
-          blue_label: string;
-          green_label: string;
-          yellow_label: string;
+          year: number;
+          month: number;
+          color: 'red' | 'blue' | 'green' | 'yellow';
+          label: string;
           created_at: string;
           updated_at: string;
         };
         Insert: {
           id?: string;
           user_id: string; // UUID - Supabase Authのuser.idと同じ
-          red_label?: string;
-          blue_label?: string;
-          green_label?: string;
-          yellow_label?: string;
+          year: number;
+          month: number;
+          color: 'red' | 'blue' | 'green' | 'yellow';
+          label: string;
           created_at?: string;
           updated_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
-          red_label?: string;
-          blue_label?: string;
-          green_label?: string;
-          yellow_label?: string;
+          year?: number;
+          month?: number;
+          color?: 'red' | 'blue' | 'green' | 'yellow';
+          label?: string;
           created_at?: string;
           updated_at?: string;
         };
