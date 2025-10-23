@@ -11,7 +11,7 @@ const defaultLabels: StickerLabels = {
   yellow: '早起き'
 };
 
-export function useSupabaseStickerLabels(userId?: string) {
+export function useSupabaseStickerLabels(userId?: string, year?: number, month?: number) {
   const [labels, setLabels] = useState<StickerLabels>(defaultLabels);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,16 +29,21 @@ export function useSupabaseStickerLabels(userId?: string) {
       return;
     }
 
+    // 年月が指定されていない場合は現在の年月を使用
+    const now = new Date();
+    const targetYear = year ?? now.getFullYear();
+    const targetMonth = month ?? now.getMonth() + 1;
+
     const loadLabels = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await db.getLabels(userId);
+        const data = await db.getLabels(userId, targetYear, targetMonth);
         if (data) {
           setLabels(data);
         } else {
           // ラベルがない場合はデフォルトラベルを作成
-          await db.upsertLabels(userId, defaultLabels);
+          await db.upsertLabels(userId, targetYear, targetMonth, defaultLabels);
           setLabels(defaultLabels);
         }
       } catch (err) {
@@ -52,7 +57,7 @@ export function useSupabaseStickerLabels(userId?: string) {
     };
 
     loadLabels();
-  }, [userId]);
+  }, [userId, year, month]);
 
   // 特定の色のラベルを更新
   const updateLabel = async (stickerType: StickerType, newLabel: string) => {
@@ -66,6 +71,11 @@ export function useSupabaseStickerLabels(userId?: string) {
       return;
     }
 
+    // 年月が指定されていない場合は現在の年月を使用
+    const now = new Date();
+    const targetYear = year ?? now.getFullYear();
+    const targetMonth = month ?? now.getMonth() + 1;
+
     // 20文字制限
     const trimmedLabel = newLabel.slice(0, 20);
     const newLabels = { ...labels, [stickerType]: trimmedLabel };
@@ -74,7 +84,7 @@ export function useSupabaseStickerLabels(userId?: string) {
     setLabels(newLabels);
 
     try {
-      await db.upsertLabels(userId, newLabels);
+      await db.upsertLabels(userId, targetYear, targetMonth, newLabels);
       setError(null);
     } catch (err) {
       console.error('Failed to update label:', err);

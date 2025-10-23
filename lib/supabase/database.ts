@@ -139,13 +139,14 @@ export class DatabaseService {
   }
 
   // ラベル関連の操作
-  async getLabels(userId: string): Promise<StickerLabels | null> {
+  async getLabels(userId: string, year: number, month: number): Promise<StickerLabels | null> {
     try {
       const { data, error } = await this.supabase
-        .from('user_sticker_labels')
+        .from('sticker_labels')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .eq('year', year)
+        .eq('month', month);
 
       if (error && error.code !== 'PGRST116') {
         console.error('Failed to get labels:', error);
@@ -156,47 +157,63 @@ export class DatabaseService {
         throw error;
       }
 
-      if (!data) return null;
+      if (!data || data.length === 0) return null;
 
-      return {
-        red: (data as Database['public']['Tables']['user_sticker_labels']['Row']).red_label,
-        blue: (data as Database['public']['Tables']['user_sticker_labels']['Row']).blue_label,
-        green: (data as Database['public']['Tables']['user_sticker_labels']['Row']).green_label,
-        yellow: (data as Database['public']['Tables']['user_sticker_labels']['Row']).yellow_label,
+      // 4色分のデータをStickerLabels形式に変換
+      const labels: StickerLabels = {
+        red: '運動',
+        blue: '勉強',
+        green: '読書',
+        yellow: '早起き',
       };
+
+      data.forEach((row: Database['public']['Tables']['sticker_labels']['Row']) => {
+        labels[row.color as keyof StickerLabels] = row.label;
+      });
+
+      return labels;
     } catch (error) {
       console.error('Error in getLabels:', error);
       return null;
     }
   }
 
-  async upsertLabels(userId: string, labels: StickerLabels) {
+  async upsertLabels(userId: string, year: number, month: number, labels: StickerLabels) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (this.supabase as any)
-        .from('user_sticker_labels')
-        .upsert({
-          user_id: userId,
-          red_label: labels.red,
-          blue_label: labels.blue,
-          green_label: labels.green,
-          yellow_label: labels.yellow,
-        }, {
-          onConflict: 'user_id' // unique制約の列を指定
-        })
-        .select()
-        .single();
+      // 4色それぞれを個別レコードとして保存
+      const colors: Array<keyof StickerLabels> = ['red', 'blue', 'green', 'yellow'];
+      const promises = colors.map(color =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this.supabase as any)
+          .from('sticker_labels')
+          .upsert({
+            user_id: userId,
+            year,
+            month,
+            color,
+            label: labels[color],
+          }, {
+            onConflict: 'user_id,year,month,color' // unique制約の列を指定
+          })
+          .select()
+          .single()
+      );
 
-      if (error) {
-        console.error('Failed to upsert labels:', error);
-        // RLSエラーの場合は無視（一時的な回避策）
-        if (error.code === '42501' || error.message?.includes('not present in table')) {
-          return null;
+      const results = await Promise.all(promises);
+
+      // いずれかのエラーをチェック
+      for (const result of results) {
+        if (result.error) {
+          console.error('Failed to upsert labels:', result.error);
+          // RLSエラーの場合は無視（一時的な回避策）
+          if (result.error.code === '42501' || result.error.message?.includes('not present in table')) {
+            return null;
+          }
+          throw result.error;
         }
-        throw error;
       }
 
-      return data;
+      return results.map(r => r.data);
     } catch (error) {
       console.error('Error in upsertLabels:', error);
       return null;
@@ -228,8 +245,8 @@ export class DatabaseService {
     await Promise.all(promises);
   }
 
-  async migrateUserLabels(userId: string, labels: StickerLabels) {
-    await this.upsertLabels(userId, labels);
+  async migrateUserLabels(userId: string, year: number, month: number, labels: StickerLabels) {
+    await this.upsertLabels(userId, year, month, labels);
   }
 }
 

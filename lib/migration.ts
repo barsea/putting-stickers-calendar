@@ -139,10 +139,10 @@ export class DataMigrationService {
         }
       }
 
-      // ラベルデータの移行
+      // ラベルデータの移行（2025年10月のデータとして移行）
       if (labels) {
         try {
-          await db.upsertLabels(supabaseUserId, labels);
+          await db.upsertLabels(supabaseUserId, 2025, 10, labels);
         } catch (labelError) {
           console.error('Failed to migrate labels:', labelError);
           // ラベル移行失敗は非致命的
@@ -187,9 +187,9 @@ export class DataMigrationService {
         }
       }
 
-      // ラベルデータの移行
+      // ラベルデータの移行（2025年10月のデータとして移行）
       if (labels) {
-        await db.upsertLabels(supabaseUserId, labels);
+        await db.upsertLabels(supabaseUserId, 2025, 10, labels);
       }
 
       return {
