@@ -285,7 +285,7 @@ export default function Calendar({ onStickerClick, getDayStickers, userId, year,
       </div>
       
       {/* ステッカーラベル */}
-      <StickerLabels userId={userId} isSupabaseAuth={isSupabaseAuth} />
+      <StickerLabels userId={userId} year={year} month={month} isSupabaseAuth={isSupabaseAuth} />
     </div>
   );
 }

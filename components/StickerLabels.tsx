@@ -13,11 +13,13 @@ const stickerColors = {
 
 interface StickerLabelsProps {
   userId?: string;
+  year: number;
+  month: number;
   isSupabaseAuth?: boolean;
 }
 
-export default function StickerLabels({ userId, isSupabaseAuth = false }: StickerLabelsProps) {
-  const { labels, updateLabel } = useHybridStickerLabels(userId, isSupabaseAuth);
+export default function StickerLabels({ userId, year, month, isSupabaseAuth = false }: StickerLabelsProps) {
+  const { labels, updateLabel } = useHybridStickerLabels(userId, year, month, isSupabaseAuth);
   const [editingSticker, setEditingSticker] = useState<StickerType | null>(null);
   const [editValue, setEditValue] = useState('');
   const isComposingRef = useRef(false);

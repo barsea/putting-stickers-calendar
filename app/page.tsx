@@ -24,7 +24,7 @@ export default function Home() {
 
   const userId = authState.user?.id;
   const { getDayStickers, toggleSticker, getStats } = useHybridStickers(userId, selectedYear, selectedMonth);
-  const { labels } = useHybridStickerLabels(userId, authState.isAuthenticated);
+  const { labels } = useHybridStickerLabels(userId, selectedYear, selectedMonth, authState.isAuthenticated);
   const stats = getStats();
 
   // 月変更ハンドラー

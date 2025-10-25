@@ -4,10 +4,10 @@ import { useStickerLabels } from './useStickerLabels';
 import { useSupabaseStickerLabels } from './useSupabaseStickerLabels';
 import { StickerType } from '@/types/database';
 
-export function useHybridStickerLabels(userId?: string, isSupabaseAuth = false) {
+export function useHybridStickerLabels(userId?: string, year?: number, month?: number, isSupabaseAuth = false) {
   // 両方のhookを常に呼び出す（React Hooksの規則に従う）
-  const localLabels = useStickerLabels(userId);
-  const supabaseLabels = useSupabaseStickerLabels(userId);
+  const localLabels = useStickerLabels(userId, year, month);
+  const supabaseLabels = useSupabaseStickerLabels(userId, year, month);
 
   // Supabase認証時で、UUIDのユーザーIDがある場合はSupabaseの結果を使用
   // 数値IDの場合はゲストユーザーとして扱い、LocalStorageを使用
