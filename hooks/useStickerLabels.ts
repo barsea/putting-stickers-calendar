@@ -35,12 +35,48 @@ export function useStickerLabels(userId?: string, year?: number, month?: number)
     try {
       const storageKey = getStorageKey();
       const storedLabels = localStorage.getItem(storageKey);
+
       if (storedLabels) {
+        // 新形式のデータが存在する場合はそのまま使用
         const parsedLabels = JSON.parse(storedLabels);
         setLabels(parsedLabels);
       } else {
-        // ラベルがない場合はデフォルトラベルを使用
-        setLabels(defaultLabels);
+        // 新形式のデータがない場合、旧形式からの移行を試みる
+        const oldStorageKey = userId ? `user-${userId}-sticker-labels` : 'guest-sticker-labels';
+        const oldLabels = localStorage.getItem(oldStorageKey);
+
+        if (oldLabels) {
+          // 旧形式データが存在する場合、新形式に移行
+          const parsedOldLabels = JSON.parse(oldLabels);
+
+          // 2025年10月のデータとして保存
+          const migrationYear = 2025;
+          const migrationMonth = 10;
+          const userPrefix = userId ? `user-${userId}-` : 'guest-';
+          const migrationKey = `${userPrefix}${migrationYear}-${migrationMonth}-labels`;
+
+          localStorage.setItem(migrationKey, JSON.stringify(parsedOldLabels));
+
+          // 旧形式のキーを削除
+          localStorage.removeItem(oldStorageKey);
+
+          console.log(`Migrated labels from ${oldStorageKey} to ${migrationKey}`);
+
+          // 現在表示中の年月が2025年10月の場合は移行したデータを使用
+          const now = new Date();
+          const targetYear = year ?? now.getFullYear();
+          const targetMonth = month ?? now.getMonth() + 1;
+
+          if (targetYear === migrationYear && targetMonth === migrationMonth) {
+            setLabels(parsedOldLabels);
+          } else {
+            // それ以外の月はデフォルトラベルを使用
+            setLabels(defaultLabels);
+          }
+        } else {
+          // 旧形式も新形式もない場合はデフォルトラベルを使用
+          setLabels(defaultLabels);
+        }
       }
     } catch (error) {
       console.error('Failed to load sticker labels from localStorage:', error);
