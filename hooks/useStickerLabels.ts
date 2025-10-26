@@ -20,14 +20,42 @@ const defaultLabels: StickerLabels = {
 export function useStickerLabels(userId?: string, year?: number, month?: number) {
   const [labels, setLabels] = useState<StickerLabels>(defaultLabels);
 
-  const getStorageKey = () => {
+  const getStorageKey = (y?: number, m?: number) => {
     // 年月が指定されていない場合は現在の年月を使用
     const now = new Date();
-    const targetYear = year ?? now.getFullYear();
-    const targetMonth = month ?? now.getMonth() + 1;
+    const targetYear = y ?? year ?? now.getFullYear();
+    const targetMonth = m ?? month ?? now.getMonth() + 1;
 
     const userPrefix = userId ? `user-${userId}-` : 'guest-';
     return `${userPrefix}${targetYear}-${targetMonth}-labels`;
+  };
+
+  // 前月のラベルを取得する関数
+  const getPreviousMonthLabels = (): StickerLabels | null => {
+    try {
+      const now = new Date();
+      const targetYear = year ?? now.getFullYear();
+      const targetMonth = month ?? now.getMonth() + 1;
+
+      // 前月を計算
+      let prevYear = targetYear;
+      let prevMonth = targetMonth - 1;
+      if (prevMonth < 1) {
+        prevMonth = 12;
+        prevYear -= 1;
+      }
+
+      const prevStorageKey = getStorageKey(prevYear, prevMonth);
+      const prevLabels = localStorage.getItem(prevStorageKey);
+
+      if (prevLabels) {
+        return JSON.parse(prevLabels);
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to get previous month labels:', error);
+      return null;
+    }
   };
 
   // LocalStorageからラベルを読み込み
@@ -70,12 +98,29 @@ export function useStickerLabels(userId?: string, year?: number, month?: number)
           if (targetYear === migrationYear && targetMonth === migrationMonth) {
             setLabels(parsedOldLabels);
           } else {
-            // それ以外の月はデフォルトラベルを使用
-            setLabels(defaultLabels);
+            // それ以外の月は前月ラベル引き継ぎまたはデフォルト
+            const prevLabels = getPreviousMonthLabels();
+            if (prevLabels) {
+              // 前月のラベルを引き継ぐ
+              localStorage.setItem(storageKey, JSON.stringify(prevLabels));
+              setLabels(prevLabels);
+              console.log(`Inherited labels from previous month for ${storageKey}`);
+            } else {
+              setLabels(defaultLabels);
+            }
           }
         } else {
-          // 旧形式も新形式もない場合はデフォルトラベルを使用
-          setLabels(defaultLabels);
+          // 旧形式も新形式もない場合、前月のラベルを確認
+          const prevLabels = getPreviousMonthLabels();
+          if (prevLabels) {
+            // 前月のラベルを引き継いで保存
+            localStorage.setItem(storageKey, JSON.stringify(prevLabels));
+            setLabels(prevLabels);
+            console.log(`Inherited labels from previous month for ${storageKey}`);
+          } else {
+            // 前月もない場合はデフォルトラベルを使用
+            setLabels(defaultLabels);
+          }
         }
       }
     } catch (error) {

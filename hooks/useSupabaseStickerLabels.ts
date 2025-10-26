@@ -42,9 +42,26 @@ export function useSupabaseStickerLabels(userId?: string, year?: number, month?:
         if (data) {
           setLabels(data);
         } else {
-          // ラベルがない場合はデフォルトラベルを作成
-          await db.upsertLabels(userId, targetYear, targetMonth, defaultLabels);
-          setLabels(defaultLabels);
+          // ラベルがない場合、前月のラベルを確認
+          let prevYear = targetYear;
+          let prevMonth = targetMonth - 1;
+          if (prevMonth < 1) {
+            prevMonth = 12;
+            prevYear -= 1;
+          }
+
+          const prevLabels = await db.getLabels(userId, prevYear, prevMonth);
+
+          if (prevLabels) {
+            // 前月のラベルを引き継いで保存
+            await db.upsertLabels(userId, targetYear, targetMonth, prevLabels);
+            setLabels(prevLabels);
+            console.log(`Inherited labels from ${prevYear}-${prevMonth} to ${targetYear}-${targetMonth}`);
+          } else {
+            // 前月もない場合はデフォルトラベルを作成
+            await db.upsertLabels(userId, targetYear, targetMonth, defaultLabels);
+            setLabels(defaultLabels);
+          }
         }
       } catch (err) {
         console.error('Failed to load labels:', err);
