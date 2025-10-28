@@ -107,6 +107,9 @@ export default function StickerLabels({ userId, year, month, isSupabaseAuth = fa
       <div className="text-center text-xs text-gray-500 mt-2 sm:mt-2">
         ラベルをクリックして編集できます（最大20文字）
       </div>
+      <div className="text-center text-xs text-gray-500 mt-1">
+        月ごとに異なるラベルを設定できます
+      </div>
     </div>
   );
 }
