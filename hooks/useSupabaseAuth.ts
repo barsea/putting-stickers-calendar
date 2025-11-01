@@ -71,7 +71,8 @@ export function useSupabaseAuth() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // supabaseクライアントはシングルトンなので依存配列は空でOK
 
   // ユーザープロファイルの確認・作成
   const ensureUserProfile = async (user: User) => {

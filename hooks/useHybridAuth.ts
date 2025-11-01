@@ -135,7 +135,13 @@ export function useHybridAuth() {
         !migrationStatus.completed) {
       performDataMigration(supabaseAuth.authState.user.id);
     }
-  }, [supabaseAuth.authState.isAuthenticated, supabaseAuth.authState.user?.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    supabaseAvailable,
+    supabaseAuth.authState.isAuthenticated,
+    supabaseAuth.authState.user?.id,
+    migrationStatus.completed
+  ]);
 
   // サインアップ
   const signUp = async (signUpData: SignUpData): Promise<{ success: boolean; error?: string }> => {
