@@ -70,23 +70,23 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       )}
       
-      {percentage !== 100 && daysWithStickers >= 25 && (
+      {percentage !== 100 && totalStickers >= 100 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full text-sm font-medium">
-            🏆 驚異的な継続力です！
+            🏆 驚異的なステッカー数です！
           </div>
         </div>
       )}
 
-      {daysWithStickers >= 20 && daysWithStickers < 25 && (
+      {totalStickers >= 80 && totalStickers < 100 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-orange-100 text-orange-800 px-3 py-2 rounded-full text-sm font-medium">
-            🎉 素晴らしい継続力です！
+            🎉 素晴らしい記録です！
           </div>
         </div>
       )}
 
-      {daysWithStickers >= 15 && daysWithStickers < 20 && (
+      {totalStickers >= 60 && totalStickers < 80 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-purple-100 text-purple-800 px-3 py-2 rounded-full text-sm font-medium">
             ✨ 習慣が定着してきました！
@@ -94,7 +94,7 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       )}
 
-      {daysWithStickers >= 10 && daysWithStickers < 15 && (
+      {totalStickers >= 40 && totalStickers < 60 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded-full text-sm font-medium">
             👍 順調に続けています！
@@ -102,7 +102,7 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       )}
 
-      {daysWithStickers >= 5 && daysWithStickers < 10 && (
+      {totalStickers >= 20 && totalStickers < 40 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-green-100 text-green-800 px-3 py-2 rounded-full text-sm font-medium">
             🌱 良いスタートです！
@@ -110,7 +110,7 @@ export default function Stats({ totalStickers, daysWithStickers, daysInMonth, pe
         </div>
       )}
 
-      {daysWithStickers >= 1 && daysWithStickers < 5 && (
+      {totalStickers >= 1 && totalStickers < 20 && (
         <div className="mt-4 text-center" role="status" aria-live="polite">
           <div className="bg-gray-100 text-gray-800 px-3 py-2 rounded-full text-sm font-medium">
             💪 コツコツ頑張りましょう！
